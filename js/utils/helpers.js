@@ -1,6 +1,5 @@
 import { CHART_QUALITATIVE } from './constants.js';
 
-// ---- Theme & colours ----
 export function themeColors() {
   const cs = getComputedStyle(document.body);
   return {
@@ -24,7 +23,6 @@ export function majorColorScale(majors) {
   return d3.scaleOrdinal(CHART_QUALITATIVE).domain(majors);
 }
 
-// ---- Tooltip ----
 const tooltip = d3.select('#tooltip');
 export function showTip(html, evt) {
   tooltip.html(html).style('opacity', 1).style('left', (evt.clientX + 16) + 'px').style('top', (evt.clientY - 10) + 'px');
@@ -33,7 +31,6 @@ export function hideTip() {
   tooltip.style('opacity', 0);
 }
 
-// ---- Icons ----
 const ICONS = {
   target: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.7" fill="currentColor" stroke="none"/>',
   trendUp: '<polyline points="3 17 9 11 13 15 21 7"/><polyline points="14 7 21 7 21 14"/>',
@@ -61,7 +58,6 @@ export function paleFor(hex) {
   return map[hex] || 'var(--blue-pale)';
 }
 
-// ---- KPI tween ----
 const kpiPrev = {};
 export function tweenKpiValue(node, key, raw, formatter) {
   if (raw === null || raw === undefined) { node.text('—'); delete kpiPrev[key]; return; }
@@ -73,7 +69,6 @@ export function tweenKpiValue(node, key, raw, formatter) {
   });
 }
 
-// ---- Misc ----
 export function fmt2(v) { return d3.format('.2f')(v); }
 
 export function pearson(data, a, b) {

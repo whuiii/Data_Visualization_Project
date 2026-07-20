@@ -1,6 +1,5 @@
 import { MONTH_ORDER, YEAR_ORDER } from './utils/constants.js';
 
-// ---- State ----
 export const state = {
   major: 'all',
   year: 'all',
@@ -19,7 +18,6 @@ let RAW_DATA = [];
 export function setData(data) { RAW_DATA = data; }
 export function getRawData() { return RAW_DATA; }
 
-// ---- Filtering ----
 export function getFiltered() {
   return RAW_DATA.filter(d => {
     if (state.major !== 'all' && d.Major_Category !== state.major) return false;
@@ -43,7 +41,6 @@ export function getFiltered() {
   });
 }
 
-// ---- Get unique values for filters ----
 export function getMajors() {
   return Array.from(new Set(RAW_DATA.map(d => d.Major_Category))).sort();
 }

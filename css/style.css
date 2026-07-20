@@ -170,12 +170,12 @@ h1, h2, h3, h4 {
 .navitem {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 8px 10px;
-    border-radius: 8px;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
     cursor: pointer;
     color: var(--text-muted);
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
     transition: background .15s, color .15s;
 }
@@ -187,28 +187,13 @@ h1, h2, h3, h4 {
     background: var(--accent-soft);
     color: var(--accent);
 }
-.navitem .tick {
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
-    border-radius: 4px;
-    border: 1.5px solid var(--border-strong);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.navitem .nav-icon {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
 }
-.navitem.active .tick {
-    background: var(--accent);
-    border-color: var(--accent);
-}
-.navitem .tick svg {
-    width: 9px;
-    height: 9px;
-    opacity: 0;
-    transition: opacity .15s;
-}
-.navitem.active .tick svg {
-    opacity: 1;
+.navitem .nav-label-text {
+    font-weight: 500;
 }
 .sidebar-foot {
     margin-top: auto;
@@ -235,6 +220,9 @@ h1, h2, h3, h4 {
     padding: 32px 40px 44px;
     position: relative;
     overflow: hidden;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    box-shadow: 0 8px 32px rgba(13, 71, 161, 0.15);
 }
 .hero::before {
     content: '';
@@ -273,18 +261,20 @@ h1, h2, h3, h4 {
     margin-bottom: 18px;
 }
 .hero-title h1 {
-    font-size: clamp(26px, 4vw, 40px);
+    font-size: clamp(28px, 4.5vw, 44px);
     font-weight: 800;
     color: #fff;
     letter-spacing: -0.02em;
     line-height: 1.1;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.10);
 }
 .hero-title .sub {
-    font-size: 15px;
-    color: rgba(255, 255, 255, .75);
+    font-size: 16px;
+    color: rgba(255, 255, 255, .85);
     font-weight: 400;
-    margin-top: 6px;
+    margin-top: 8px;
     max-width: 640px;
+    line-height: 1.6;
 }
 .hero-title .badge {
     display: inline-block;
@@ -292,11 +282,12 @@ h1, h2, h3, h4 {
     color: #fff;
     font-size: 11px;
     font-weight: 600;
-    padding: 4px 14px;
+    padding: 5px 16px;
     border-radius: 30px;
-    margin-top: 10px;
+    margin-top: 12px;
     font-family: 'Roboto Mono', monospace;
     letter-spacing: .04em;
+    backdrop-filter: blur(4px);
 }
 .hero-controls {
     display: flex;
@@ -368,9 +359,9 @@ h1, h2, h3, h4 {
 .persona-section {
     position: relative;
     z-index: 3;
-    margin-top: 8px;
+    margin-top: 12px;
 }
-.persona-section .label {
+.persona-label {
     font-family: 'Roboto Mono', monospace;
     font-size: 10px;
     letter-spacing: .1em;
@@ -454,7 +445,7 @@ h1, h2, h3, h4 {
     color: rgba(255, 255, 255, .7);
 }
 
-/* ===== FILTER BAR (Rounded Dropdown Container) ===== */
+/* ===== FILTER BAR ===== */
 .filter-section {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
@@ -466,7 +457,7 @@ h1, h2, h3, h4 {
     position: sticky;
     top: 0;
     z-index: 50;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+    box-shadow: var(--shadow);
 }
 .filter-header {
     font-weight: 600;
@@ -485,7 +476,7 @@ h1, h2, h3, h4 {
     flex: 1;
 }
 
-/* ---- Pill chips with ROUNDED dropdown container ---- */
+/* ---- Pill chips ---- */
 .filter-chip {
     display: flex;
     align-items: center;
@@ -528,55 +519,22 @@ h1, h2, h3, h4 {
     background-repeat: no-repeat;
     background-position: right center;
     background-size: 10px;
-    border-radius: 50px; /* ROUNDED DROPDOWN CONTAINER */
+    border-radius: 50px;
 }
-/* Light grey dropdown hover (NO BLUE) */
 .filter-chip select option {
     background: var(--surface);
     color: var(--text);
-    font-weight: 400;
-    padding: 8px 14px;
-    border-radius: 8px;
 }
-.filter-chip select option:hover,
-.filter-chip select option:checked,
-.filter-chip select option:active,
-.filter-chip select option:focus {
-    background: #e5e7eb !important;
-    color: var(--text) !important;
-}
-.filter-chip select option:checked {
-    background: #e5e7eb;
-    color: var(--text);
-}
-.filter-chip select:focus {
-    outline: none;
-    box-shadow: none;
-    border-radius: 50px;
-}
-
-/* ---- Search pill (first after Filters) ---- */
 .filter-chip-search {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 50px;
+    flex: 0 1 220px;
+    min-width: 120px;
     padding: 0 14px 0 16px;
-    height: 34px;
-    flex: 0 1 180px;
-    min-width: 130px;
-    transition: border-color .15s;
-}
-.filter-chip-search:hover {
-    border-color: var(--border-strong);
 }
 .filter-chip-search input {
     border: none;
     background: transparent;
     padding: 4px 0;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
     color: var(--text);
     outline: none;
@@ -587,8 +545,6 @@ h1, h2, h3, h4 {
     color: var(--text-faint);
     font-weight: 400;
 }
-
-/* ---- Range pill ---- */
 .filter-chip-range {
     display: flex;
     align-items: center;
@@ -636,8 +592,6 @@ h1, h2, h3, h4 {
     font-family: 'Roboto Mono', monospace;
     min-width: 32px;
 }
-
-/* ---- Reset button ---- */
 .resetBtn {
     background: transparent;
     border: 1px solid var(--border);
@@ -661,7 +615,7 @@ h1, h2, h3, h4 {
     border-color: var(--border-strong);
 }
 
-/* ===== CONTENT ===== */
+/* ===== CONTENT & PAGES ===== */
 .content {
     padding: 20px 30px 60px;
     max-width: 1420px;
@@ -669,16 +623,14 @@ h1, h2, h3, h4 {
     margin: 0 auto;
     flex: 1;
 }
-body.mode-simple .content {
-    max-width: 1420px;
-    padding: 20px 30px 60px;
+.page {
+    display: none;
 }
-
-.section {
-    scroll-margin-top: 80px;
+.page.active {
+    display: block;
 }
 .section-heading {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: 700;
     color: var(--text);
     margin: 36px 0 20px;
@@ -688,9 +640,9 @@ body.mode-simple .content {
 }
 .section-heading .num {
     font-family: 'Roboto Mono', monospace;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: var(--accent);
-    opacity: 0.6;
+    opacity: 0.7;
     font-weight: 400;
 }
 
@@ -715,7 +667,7 @@ body.mode-simple .kpi-row {
     border: 1px solid var(--border);
     border-radius: 14px;
     padding: 16px 18px 14px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    box-shadow: var(--shadow);
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -724,9 +676,6 @@ body.mode-simple .kpi-row {
 .kpi:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(13, 71, 161, 0.08);
-}
-body.mode-simple .kpi {
-    padding: 20px 18px;
 }
 .kpi .chip {
     width: 34px;
@@ -750,9 +699,6 @@ body.mode-simple .kpi {
     color: var(--text-faint);
     font-weight: 600;
 }
-body.mode-simple .kpi .lbl {
-    font-size: 14px;
-}
 .kpi .val {
     font-family: 'Roboto Mono', monospace;
     font-size: 28px;
@@ -760,17 +706,14 @@ body.mode-simple .kpi .lbl {
     color: var(--text);
     line-height: 1.2;
 }
-body.mode-simple .kpi .val {
-    font-size: 36px;
-}
 .kpi .sub {
     font-size: 12px;
     color: var(--text-muted);
     margin-top: 1px;
 }
-body.mode-simple .kpi .sub {
-    font-size: 14px;
-}
+body.mode-accessible .kpi .val { font-size: 32px; }
+body.mode-simple .kpi .val { font-size: 36px; }
+body.mode-simple .kpi .lbl { font-size: 14px; }
 
 /* ===== CARDS ===== */
 .grid2 {
@@ -787,7 +730,7 @@ body.mode-simple .kpi .sub {
     border-radius: var(--radius);
     padding: 18px 20px 16px;
     margin-bottom: 18px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    box-shadow: var(--shadow);
     transition: background .2s;
 }
 .card-head {
@@ -811,18 +754,12 @@ body.mode-simple .kpi .sub {
     color: var(--text);
     margin-top: 2px;
 }
-body.mode-simple .card-head h3 {
-    font-size: 24px;
-}
 .card-head p {
     font-size: 15px;
     color: var(--text-muted);
     margin-top: 4px;
     max-width: 540px;
     line-height: 1.55;
-}
-body.mode-simple .card-head p {
-    font-size: 18px;
 }
 .card-tag {
     font-family: 'Roboto Mono', monospace;
@@ -851,9 +788,6 @@ body.mode-simple .card-head p {
     color: var(--text-muted);
     margin-top: 10px;
     font-family: 'Roboto Mono', monospace;
-}
-body.mode-simple .legend {
-    font-size: 16px;
 }
 .legend span {
     display: inline-flex;
@@ -897,25 +831,13 @@ body.mode-simple .legend {
 }
 
 /* ===== CHART WRAPPERS ===== */
-#chartTrend,
-#chartMajorBar,
-#chartDonut,
-#chartScatter,
-#chartDrilldown,
-#chartHeatmap,
-#chartParallel,
-#chartTimeline {
+#chartTrend, #chartMajorBar, #chartDonut, #chartScatter, #chartDrilldown,
+#chartHeatmap, #chartParallel, #chartTimeline {
     width: 100%;
     min-height: 240px;
 }
-#chartTrend svg,
-#chartMajorBar svg,
-#chartDonut svg,
-#chartScatter svg,
-#chartDrilldown svg,
-#chartHeatmap svg,
-#chartParallel svg,
-#chartTimeline svg {
+#chartTrend svg, #chartMajorBar svg, #chartDonut svg, #chartScatter svg,
+#chartDrilldown svg, #chartHeatmap svg, #chartParallel svg, #chartTimeline svg {
     width: 100%;
     height: auto;
 }
@@ -924,11 +846,7 @@ body.mode-simple .legend {
     font-size: 12px;
     font-family: 'Roboto Mono', monospace;
 }
-body.mode-simple .axis text {
-    font-size: 14px;
-}
-.axis path,
-.axis line {
+.axis path, .axis line {
     stroke: var(--border);
 }
 .gridline line {
@@ -984,23 +902,61 @@ body.mode-simple .axis text {
     font-weight: 600;
 }
 
-/* ===== INSIGHTS ===== */
+/* ============================================================
+   PEACEFUL INSIGHTS PAGE – refined sizing & spacing
+   ============================================================ */
+
+/* Section labels – softer and cleaner */
+.insight-section-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-faint);
+    margin: 28px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.8;
+}
+.insight-section-label:first-child {
+    margin-top: 0;
+}
+/* Make the section label icon smaller and softer */
+.insight-section-label svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 1.8;
+    opacity: 0.7;
+}
+
+/* Insight cards – peaceful with more breathing room */
 .insight-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-left: 4px solid var(--gray-c);
+    border-left-width: 4px;
+    border-left-style: solid;
     border-radius: var(--radius);
-    padding: 16px 18px;
+    padding: 18px 24px;
     margin-bottom: 14px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    box-shadow: var(--shadow);
     display: flex;
-    gap: 14px;
+    gap: 16px;
     align-items: flex-start;
+    transition: all 0.2s ease;
 }
+.insight-card:hover {
+    background: var(--surface-2);
+    border-color: var(--border-strong);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+/* Smaller, more peaceful icons inside insight cards */
 .insight-card .ic {
-    width: 32px;
-    height: 32px;
-    border-radius: 9px;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -1008,91 +964,56 @@ body.mode-simple .axis text {
     background: var(--gray-pale);
     color: var(--gray-c);
     margin-top: 2px;
+    transition: background 0.2s;
 }
 .insight-card .ic svg {
-    width: 18px;
-    height: 18px;
+    width: 14px;
+    height: 14px;
+    stroke-width: 2;
 }
+
+/* Typography – lighter, calmer */
 .insight-card .body {
     flex: 1;
     min-width: 0;
 }
 .insight-card h4 {
-    font-size: 15px;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 600;
     margin-bottom: 4px;
     color: var(--text);
-}
-body.mode-simple .insight-card h4 {
-    font-size: 18px;
+    letter-spacing: -0.01em;
 }
 .insight-card p {
     font-size: 13px;
     color: var(--text-muted);
-    line-height: 1.6;
-}
-body.mode-simple .insight-card p {
-    font-size: 16px;
+    line-height: 1.7;
+    max-width: 720px;
 }
 .insight-card .num {
     font-family: 'Roboto Mono', monospace;
-    font-weight: 700;
-}
-.insight-card.neutral {
-    border-left-color: var(--gray-c);
-}
-.insight-card.neutral .ic {
-    background: var(--gray-pale);
-    color: var(--gray-c);
-}
-.insight-card.risk {
-    border-left-color: var(--red);
-}
-.insight-card.risk .ic {
-    background: var(--red-pale);
-    color: var(--red);
-}
-.insight-card.risk .num {
-    color: var(--red);
-}
-.insight-card.good {
-    border-left-color: var(--green);
-}
-.insight-card.good .ic {
-    background: var(--green-pale);
-    color: var(--green);
-}
-.insight-card.good .num {
-    color: var(--green);
-}
-.insight-card.reco {
-    border-left-color: var(--teal);
-}
-.insight-card.reco .ic {
-    background: var(--teal-pale);
-    color: var(--teal);
-}
-.insight-card.reco .num {
-    color: var(--teal);
-}
-.insight-section-label {
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    color: var(--text-faint);
-    margin: 24px 0 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-body.mode-simple .insight-section-label {
-    font-size: 16px;
-}
-.insight-section-label:first-child {
-    margin-top: 0;
+    font-weight: 600;
+    color: var(--text);
 }
 
+/* Colour overrides – keep the subtle left border */
+.insight-card.neutral { border-left-color: var(--gray-c); }
+.insight-card.neutral .ic { background: var(--gray-pale); color: var(--gray-c); }
+
+.insight-card.risk { border-left-color: var(--red); }
+.insight-card.risk .ic { background: var(--red-pale); color: var(--red); }
+.insight-card.risk .num { color: var(--red); }
+
+.insight-card.good { border-left-color: var(--green); }
+.insight-card.good .ic { background: var(--green-pale); color: var(--green); }
+.insight-card.good .num { color: var(--green); }
+
+.insight-card.reco { border-left-color: var(--teal); }
+.insight-card.reco .ic { background: var(--teal-pale); color: var(--teal); }
+.insight-card.reco .num { color: var(--teal); }
+
+
+/* ===== TIMELINE CONTROLS ===== */
 .tl-controls {
     display: flex;
     gap: 8px;
@@ -1114,49 +1035,7 @@ body.mode-simple .insight-section-label {
     border-color: var(--accent);
 }
 
-/* ===== SENIOR LEADERSHIP (mode-simple) specifics ===== */
-body.mode-simple .advanced-chart {
-    display: none !important;
-}
-body.mode-simple .section-heading {
-    font-size: 1.4rem;
-}
-
-/* ===== ACCESSIBILITY ===== */
-body.mode-accessible .card-head p {
-    font-size: 1rem;
-    display: block !important;
-}
-body.mode-accessible .persona-card p,
-body.mode-accessible .persona-card .sub {
-    font-size: 1.1rem;
-}
-body.mode-accessible .kpi .val {
-    font-size: 2rem;
-}
-body.mode-accessible select,
-body.mode-accessible input[type="text"] {
-    padding: 8px 12px;
-    font-size: 14px;
-}
-
-/* ===== SCROLLBAR ===== */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-::-webkit-scrollbar-track {
-    background: var(--bg);
-}
-::-webkit-scrollbar-thumb {
-    background: var(--border-strong);
-    border-radius: 6px;
-}
-::-webkit-scrollbar-thumb:hover {
-    background: var(--text-faint);
-}
-
-/* ===== RESPONSIVE ===== */
+/* ===== RESPONSIVE & SCROLLBAR ===== */
 @media (max-width: 1024px) {
     .hero { padding: 24px 20px 30px; }
     .filter-section { padding: 10px 16px; gap: 8px 10px; }
@@ -1164,43 +1043,19 @@ body.mode-accessible input[type="text"] {
     .filter-inner { gap: 6px 8px; }
     .filter-chip { height: 30px; padding: 0 8px 0 12px; }
     .filter-chip select { font-size: 12px; min-width: 50px; max-width: 110px; padding-right: 18px; }
-    .filter-chip-search { height: 30px; flex: 0 1 140px; min-width: 90px; padding: 0 10px 0 12px; }
+    .filter-chip-search { flex: 0 1 160px; min-width: 90px; padding: 0 10px 0 12px; }
     .filter-chip-search input { font-size: 12px; }
     .filter-chip-range .range-wrap { height: 30px; padding: 0 10px 0 12px; }
     .filter-chip-range .range-wrap input[type="range"] { width: 50px; }
     .filter-chip-range .range-val { font-size: 12px; min-width: 28px; }
     .resetBtn { height: 30px; font-size: 11px; padding: 0 14px; }
     .content { padding: 16px 16px 40px; }
-    body.mode-simple .content { padding: 16px 30px 40px; max-width: 100%; }
-    .sidebar {
-        width: 56px;
-        padding: 14px 8px;
-    }
-    .sidebar .brand-text,
-    .sidebar .nav-label,
-    .sidebar .sidebar-foot p,
-    .sidebar .navitem span:not(.tick) {
-        display: none;
-    }
-    .sidebar .navitem {
-        justify-content: center;
-        padding: 8px;
-    }
-    .sidebar .brand {
-        justify-content: center;
-        padding-bottom: 12px;
-        margin-bottom: 10px;
-    }
-    .sidebar .brand-mark {
-        width: 28px;
-        height: 28px;
-    }
-    .sidebar .sidebar-foot {
-        text-align: center;
-    }
-    .sidebar .sidebar-foot p {
-        font-size: 7px;
-    }
+    .sidebar { width: 56px; padding: 14px 8px; }
+    .sidebar .brand-text, .sidebar .nav-label, .sidebar .sidebar-foot p, .sidebar .nav-label-text { display: none; }
+    .sidebar .navitem { justify-content: center; padding: 8px; }
+    .sidebar .brand { justify-content: center; padding-bottom: 12px; margin-bottom: 10px; }
+    .sidebar .brand-mark { width: 28px; height: 28px; }
+    .sidebar .sidebar-foot { text-align: center; }
     .kpi .lbl { font-size: 10px; }
     .kpi .val { font-size: 22px; }
     .card-head h3 { font-size: 16px; }
@@ -1212,8 +1067,7 @@ body.mode-accessible input[type="text"] {
     .filter-section { flex-direction: column; align-items: stretch; gap: 6px; padding: 10px 14px; }
     .filter-header { border-right: none; border-bottom: 1px solid var(--border); padding-bottom: 6px; margin-bottom: 2px; }
     .filter-inner { gap: 6px; }
-    .filter-chip { min-width: 100%; flex: 1 1 100%; padding: 0 12px 0 14px; }
-    .filter-chip select { max-width: 100%; min-width: 60px; }
+    .filter-chip { min-width: 100%; flex: 1 1 100%; }
     .filter-chip-search { flex: 1 1 100%; max-width: 100%; }
     .filter-chip-range { flex-wrap: wrap; width: 100%; }
     .filter-chip-range .range-wrap { flex: 1; }
@@ -1223,7 +1077,5 @@ body.mode-accessible input[type="text"] {
     .hero-title .sub { font-size: 13px; }
     .hero-theme-toggles button { font-size: 10px; padding: 3px 8px; }
     .font-size-control input[type="range"] { width: 60px; }
-    body.mode-simple .content { padding: 16px 16px 40px; }
-    body.mode-simple .kpi-row { grid-template-columns: repeat(2, 1fr); }
     .kpi-row { grid-template-columns: repeat(2, 1fr); }
 }

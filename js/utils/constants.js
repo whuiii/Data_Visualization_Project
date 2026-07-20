@@ -1,11 +1,7 @@
-// MONTH_ORDER & YEAR_ORDER
 export const MONTH_ORDER = ['February', 'March', 'April', 'May', 'June'];
 export const YEAR_ORDER = ['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate'];
-
-// Chart qualitative colour palette
 export const CHART_QUALITATIVE = ['#1565C0', '#2E7D32', '#00796B', '#F9A825', '#7B1FA2'];
 
-// Timeline milestones
 export const MILESTONES = [
   { label: 'Project Initiation', start: '2026-02-16', end: '2026-02-27', desc: 'Formed team, selected the Education domain, scoped stakeholder requirements and dashboard objectives.' },
   { label: 'Data Collection', start: '2026-03-02', end: '2026-03-20', desc: 'Sourced the cleaned AI-impact-on-students dataset (50,000 records), reviewed field definitions and derived variables.' },
