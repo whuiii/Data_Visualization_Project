@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Impact on Student Performance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+  <script type="module" crossorigin src="/assets/index-D5s_Yx-5.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-BN7k4EQn.css">
+</head>
+<body class="theme-light mode-standard page-charts">
+
+    <div class="shell">
+
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <svg class="brand-mark" viewBox="0 0 40 40">
+                    <rect x="1" y="1" width="38" height="38" rx="10" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.4" />
+                    <rect x="10" y="21" width="5" height="10" rx="1.4" fill="var(--accent)" />
+                    <rect x="17.5" y="15" width="5" height="16" rx="1.4" fill="var(--accent)" />
+                    <rect x="25" y="9" width="5" height="22" rx="1.4" fill="var(--accent)" />
+                </svg>
+                <div class="brand-text">
+                    <b>Group 6</b>
+                    <span>AI × Student Outcomes</span>
+                </div>
+            </div>
+            <div class="nav-label">Navigate</div>
+            <div class="navitem active" data-page="charts">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label-text">Charts</span>
+            </div>
+            <div class="navitem" data-page="timeline">
+                <span class="nav-icon">📅</span>
+                <span class="nav-label-text">Timeline</span>
+            </div>
+            <div class="navitem" data-page="insights">
+                <span class="nav-icon">💡</span>
+                <span class="nav-label-text">Insights</span>
+            </div>
+            <div class="sidebar-foot">
+                <p>TEB3133 / TFB3133<br />Data Visualization Project</p>
+            </div>
+        </aside>
+
+        <!-- ===== MAIN ===== -->
+        <div class="main">
+
+            <!-- ===== HERO ===== -->
+            <header class="hero" id="hero">
+                <div class="hero-inner">
+                    <div class="hero-top">
+                        <div class="hero-title">
+                            <h1>AI Impact on Student Performance</h1>
+                            <p class="sub">
+                                How does generative AI shape academic outcomes, skill retention, and well‑being?
+                                A data‑driven exploration of 50,000 student records.
+                            </p>
+                            <span class="badge">📊 n = 50,000 · Feb – Jun 2026</span>
+                        </div>
+                        <div class="hero-controls">
+                            <div class="hero-theme-toggles">
+                                <button class="active" data-theme="light">☀ Light</button>
+                                <button data-theme="dark">☾ Dark</button>
+                                <button data-theme="eyecare">◐ Eye‑care</button>
+                            </div>
+                            <div class="font-size-control">
+                                <label for="fontSlider" title="Adjust font size">Aa</label>
+                                <input type="range" id="fontSlider" min="0.8" max="1.8" step="0.05" value="1.0" />
+                                <span id="fontSizeLabel">100%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Persona Cards -->
+                    <div class="persona-section">
+                        <div class="persona-label">👥 Choose your role</div>
+                        <div class="persona-grid">
+                            <div class="persona-card active" data-persona="student">
+                                <div class="icon">🧑‍🎓</div>
+                                <h4>Student</h4>
+                                <div class="sub">Explore your patterns</div>
+                                <span class="tag">Interactive</span>
+                            </div>
+                            <div class="persona-card" data-persona="lecturer">
+                                <div class="icon">👨‍🏫</div>
+                                <h4>Lecturer</h4>
+                                <div class="sub">Analyse cohorts</div>
+                                <span class="tag">Detailed</span>
+                            </div>
+                            <div class="persona-card" data-persona="executive">
+                                <div class="icon">🏛️</div>
+                                <h4>Senior Leadership</h4>
+                                <div class="sub">Strategic overview</div>
+                                <span class="tag">Simplified</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ===== FILTER BAR ===== -->
+            <div class="filter-section" id="filterSection">
+                <span class="filter-header">Filters</span>
+                <div class="filter-inner">
+                    <div class="filter-chip filter-chip-search" id="searchWrap">
+                        <input type="text" id="f-search" class="interactive" placeholder="Search Student ID" />
+                    </div>
+                    <div class="filter-chip">
+                        <label>Major</label>
+                        <select id="f-major" class="interactive">
+                            <option value="all">All majors</option>
+                        </select>
+                    </div>
+                    <div class="filter-chip">
+                        <label>Year</label>
+                        <select id="f-year" class="interactive">
+                            <option value="all">All years</option>
+                        </select>
+                    </div>
+                    <div class="filter-chip">
+                        <label>Policy</label>
+                        <select id="f-policy" class="interactive">
+                            <option value="all">All policies</option>
+                        </select>
+                    </div>
+                    <div class="filter-chip">
+                        <label>Month</label>
+                        <select id="f-month" class="interactive">
+                            <option value="all">Feb – Jun</option>
+                        </select>
+                    </div>
+                    <div class="filter-chip-range">
+                        <label>Min AI hrs</label>
+                        <div class="range-wrap">
+                            <input type="range" id="f-hours" class="interactive" min="0" max="30" step="1" value="0" />
+                            <span class="range-val" id="rangeLbl">0h</span>
+                        </div>
+                    </div>
+                    <button class="resetBtn interactive" id="resetBtn">↺ Reset</button>
+                </div>
+            </div>
+
+            <!-- ===== PAGES ===== -->
+            <div class="content">
+
+                <!-- ===== PAGE: CHARTS ===== -->
+                <section id="page-charts" class="page active">
+                    <div class="section-heading"><span class="num">📊</span> Charts</div>
+
+                    <!-- KPI Row -->
+                    <div class="kpi-row" id="kpiRow"></div>
+
+                    <!-- ===== STUDENT VIEW (default) ===== -->
+                    <div id="studentView">
+                        <!-- Row 1: Donut (FIG.1) + Personal GPA vs AI Usage (FIG.2) -->
+                        <div class="grid2">
+                            <div class="card">
+                                <div class="card-head">
+                                    <div>
+                                        <div class="fig">FIG. 1</div>
+                                        <h3>Purpose of AI Use</h3>
+                                        <p>How students use GenAI tools — homework, study, writing, or research.</p>
+                                    </div>
+                                    <span class="card-tag feat">Click to filter</span>
+                                </div>
+                                <div id="chartDonut"></div>
+                            </div>
+                            <div class="card">
+                                <div class="card-head">
+                                    <div>
+                                        <div class="fig">FIG. 2</div>
+                                        <h3>Personal GPA vs AI Usage</h3>
+                                        <p>GPA improvement and AI usage hours grouped by usage level.</p>
+                                    </div>
+                                    <span class="card-tag feat">Hover for details</span>
+                                </div>
+                                <div id="chartUsageBarDual"></div>
+                                <div class="legend" id="usageBarDualLegend"></div>
+                            </div>
+                        </div>
+
+                        <!-- Row 2: Scatter (FIG.3) + Radar (FIG.4) -->
+                        <div class="grid2">
+                            <div class="card">
+                                <div class="card-head">
+                                    <div>
+                                        <div class="fig">FIG. 3</div>
+                                        <h3>AI Hours vs. Post‑Semester GPA</h3>
+                                        <p>Brush to select; search an ID to spotlight.</p>
+                                    </div>
+                                    <span class="card-tag feat">Brush + search</span>
+                                </div>
+                                <div id="chartScatter"></div>
+                                <div class="legend" id="scatterLegend"></div>
+                                <div class="searchHit" id="searchHit"></div>
+                            </div>
+                            <div class="card">
+                                <div class="card-head">
+                                    <div>
+                                        <div class="fig">FIG. 4</div>
+                                        <h3>Personal Learning Profile</h3>
+                                        <p>Radar chart showing the average student profile across key dimensions.</p>
+                                    </div>
+                                    <span class="card-tag feat">Student view</span>
+                                </div>
+                                <div id="chartRadar"></div>
+                                <div class="radar-legend" id="radarLegend"></div>
+                            </div>
+                        </div>
+
+                        <!-- Row 3: Paid Plan vs Free Plan (FIG.5) full width -->
+                        <div class="card">
+                            <div class="card-head">
+                                <div>
+                                    <div class="fig">FIG. 5</div>
+                                    <h3>Paid Plan vs Free Plan</h3>
+                                    <p>Percentage of students using paid subscriptions vs free plans. Click a slice to filter.</p>
+                                </div>
+                                <span class="card-tag feat">Click to filter</span>
+                            </div>
+                            <div id="chartPaidPie"></div>
+                        </div>
+
+                        <!-- Advanced charts (collapsible) -->
+                        <details style="margin-top:24px; cursor:pointer; color:var(--text-muted);">
+                            <summary style="font-weight:600; font-size:14px; padding:8px 0;">🔍 Advanced charts (drilldown, heatmap, parallel, trend) — click to expand</summary>
+                            <div style="margin-top:12px;">
+                                <!-- Drilldown (FIG.6) -->
+                                <div class="card">
+                                    <div class="card-head">
+                                        <div>
+                                            <div class="fig">FIG. 6</div>
+                                            <h3>Cohort by year of study</h3>
+                                            <p>Click a bar to drill into that year's majors.</p>
+                                        </div>
+                                        <span class="card-tag feat">Drill‑down</span>
+                                    </div>
+                                    <div class="backbtn interactive" id="drillBack">← Back to all years</div>
+                                    <div id="chartDrilldown"></div>
+                                </div>
+
+                                <!-- Heatmap (FIG.7) -->
+                                <div class="card advanced-chart">
+                                    <div class="card-head">
+                                        <div>
+                                            <div class="fig">FIG. 7</div>
+                                            <h3>Heat map — Major × Primary use case</h3>
+                                            <p>GPA change by colour. Click a cell to filter.</p>
+                                        </div>
+                                        <span class="card-tag feat">Hover + click filter</span>
+                                    </div>
+                                    <div id="chartHeatmap"></div>
+                                    <div class="legend" id="heatLegend"></div>
+                                </div>
+
+                                <!-- Parallel (FIG.8) -->
+                                <div class="card advanced-chart">
+                                    <div class="card-head">
+                                        <div>
+                                            <div class="fig">FIG. 8</div>
+                                            <h3>Parallel coordinates — multivariate profiles</h3>
+                                            <p>Drag any axis to brush and cross‑filter.</p>
+                                        </div>
+                                        <span class="card-tag feat">Brush any axis</span>
+                                    </div>
+                                    <div id="chartParallel"></div>
+                                    <div class="legend" id="parallelLegend"></div>
+                                </div>
+
+                                <!-- Trend (FIG.9) -->
+                                <div class="card">
+                                    <div class="card-head">
+                                        <div>
+                                            <div class="fig">FIG. 9</div>
+                                            <h3>Monthly trajectory, Feb → Jun</h3>
+                                            <p>Average GPA improvement (green) against average exam‑anxiety (blue).</p>
+                                        </div>
+                                        <span class="card-tag feat">Dual‑axis</span>
+                                    </div>
+                                    <div id="chartTrend"></div>
+                                    <div class="legend" id="trendLegend"></div>
+                                </div>
+                            </div>
+                        </details>
+                    </div>
+
+                    <!-- ===== LECTURER VIEW ===== -->
+                    <div id="lecturerView" style="display:none;">
+                        <!-- Row 1: Heatmap (full width) -->
+                        <div class="card">
+                            <div class="card-head">
+                                <div>
+                                    <div class="fig">FIG. L1</div>
+                                    <h3>Heat map — Major × Primary use case</h3>
+                                    <p>GPA change by colour. Click a cell to filter.</p>
+                                </div>
+                                <span class="card-tag feat">Hover + click filter</span>
+                            </div>
+                            <div id="chartHeatmapLecturer"></div>
+                            <div class="legend" id="heatLegendLecturer"></div>
+                        </div>
+
+                        <!-- Row 2: Scatter Plot Matrix + Histogram -->
+                        <div class="grid2">
+                            <div class="card">
+                                <div class="card-head">
+                                    <div>
+                                        <div class="fig">FIG. L2</div>
+                                        <h3>Scatter Plot Matrix</h3>
+                                        <p>Compare multiple variables at once. Hover points for details.</p>
+                                    </div>
+                                    <span class="card-tag feat">Interactive</span>
+                                </div>
+                                <div id="chartScatterMatrix"></div>
+                            </div>
+                            <div class="card">
+                                <div class="card-head">
+                                    <div>
+                                        <div class="fig">FIG. L3</div>
+                                        <h3>GPA Distribution</h3>
+                                        <p>Histogram of Post‑Semester GPA.</p>
+                                    </div>
+                                    <span class="card-tag feat">Distribution</span>
+                                </div>
+                                <div id="chartHistogram"></div>
+                            </div>
+                        </div>
+
+                        <!-- Row 3: Box Plot (GPA by usage level) -->
+                        <div class="card">
+                            <div class="card-head">
+                                <div>
+                                    <div class="fig">FIG. L4</div>
+                                    <h3>Box Plot — GPA Improvement by AI Usage Level</h3>
+                                    <p>Compare distributions across usage groups.</p>
+                                </div>
+                                <span class="card-tag feat">Box plot</span>
+                            </div>
+                            <div id="chartBoxPlot"></div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- ===== PAGE: TIMELINE ===== -->
+                <section id="page-timeline" class="page">
+                    <div class="section-heading"><span class="num">📅</span> Project Timeline</div>
+                    <div class="card">
+                        <div class="card-head">
+                            <div>
+                                <div class="fig">FIG. 10</div>
+                                <h3>Project progress timeline</h3>
+                                <p>Zoom / pan, click a milestone for details.</p>
+                            </div>
+                            <span class="card-tag feat">Zoom · pan · click</span>
+                        </div>
+                        <div class="tl-controls">
+                            <button class="interactive" id="tlZoomIn">🔍 Zoom in</button>
+                            <button class="interactive" id="tlZoomOut">🔍 Zoom out</button>
+                            <button class="interactive" id="tlReset">⟲ Reset view</button>
+                        </div>
+                        <div id="chartTimeline"></div>
+                        <div id="milestoneDetail"></div>
+                    </div>
+                </section>
+
+                <!-- ===== PAGE: INSIGHTS ===== -->
+                <section id="page-insights" class="page">
+                    <div class="section-heading"><span class="num">💡</span> Insights &amp; Recommendations</div>
+                    <div id="insightsWrap"></div>
+                </section>
+
+            </div><!-- /content -->
+        </div><!-- /main -->
+    </div><!-- /shell -->
+
+    <!-- ===== TOOLTIP ===== -->
+    <div class="tooltip" id="tooltip"></div>
+
+    <!-- ===== MODULAR JAVASCRIPT ENTRY ===== -->
+</body>
+</html>
