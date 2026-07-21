@@ -363,7 +363,7 @@ h1, h2, h3, h4 {
 }
 .persona-label {
     font-family: 'Roboto Mono', monospace;
-    font-size: 10px;
+    font-size: 12px;
     letter-spacing: .1em;
     text-transform: uppercase;
     color: rgba(255, 255, 255, .55);

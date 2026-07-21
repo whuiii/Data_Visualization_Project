@@ -64,8 +64,8 @@ export function tweenKpiValue(node, key, raw, formatter) {
   const prev = kpiPrev[key] !== undefined ? kpiPrev[key] : raw;
   kpiPrev[key] = raw;
   const interp = d3.interpolateNumber(prev, raw);
-  node.transition().duration(550).ease(d3.easeCubicOut).tween('text', function () {
-    return function (t) { this.textContent = formatter(interp(t)); };
+  node.transition().duration(550).ease(d3.easeCubicOut).tween('text', function() {
+    return function(t) { this.textContent = formatter(interp(t)); };
   });
 }
 

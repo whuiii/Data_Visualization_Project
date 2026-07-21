@@ -1,3 +1,4 @@
+// js/state.js
 import { MONTH_ORDER, YEAR_ORDER } from './utils/constants.js';
 
 export const state = {
@@ -12,6 +13,7 @@ export const state = {
   scatterBrush: null,
   parallelBrush: null,
   drillYear: null,
+  paidFilter: null,        // true = paid only, false = free only, null = all
 };
 
 let RAW_DATA = [];
@@ -37,6 +39,8 @@ export function getFiltered() {
         if (d[dim] < lo || d[dim] > hi) return false;
       }
     }
+    // New paid filter
+    if (state.paidFilter !== null && d.Paid_Subscription !== state.paidFilter) return false;
     return true;
   });
 }

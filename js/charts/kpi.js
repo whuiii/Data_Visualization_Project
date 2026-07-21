@@ -27,5 +27,5 @@ export function renderKPIs(data) {
   all.select('.chip').html(d => iconSvg(d.icon));
   all.select('.lbl').text(d => d.lbl);
   all.select('.sub').text(d => d.sub);
-  all.select('.val').each(function (d) { tweenKpiValue(d3.select(this), d.lbl, d.raw, d.fmt); });
+  all.select('.val').each(function(d) { tweenKpiValue(d3.select(this), d.lbl, d.raw, d.fmt); });
 }

@@ -1,53 +1,87 @@
 import { state, setData, getFiltered, getMajors, getYears, getPolicies, getMonths } from './state.js';
 import { renderKPIs } from './charts/kpi.js';
-import { renderTrend } from './charts/trend.js';
-import { renderMajorBar } from './charts/majorBar.js';
 import { renderDonut } from './charts/donut.js';
 import { renderScatter } from './charts/scatter.js';
+import { renderRadar } from './charts/radar.js';
 import { renderDrilldown } from './charts/drilldown.js';
 import { renderHeatmap } from './charts/heatmap.js';
 import { renderParallel } from './charts/parallel.js';
-import { renderInsights, renderSearchHit } from './charts/insights.js';
+import { renderTrend } from './charts/trend.js';
 import { renderTimeline } from './charts/timeline.js';
+import { renderInsights, renderSearchHit } from './charts/insights.js';
+import { renderUsageBarDual } from './charts/usageBarDual.js';
+import { renderPaidPie } from './charts/paidPie.js';
 
-// ---- Debounce helper ----
+// Lecturer charts
+import { renderScatterMatrix } from './charts/scatterMatrix.js';
+import { renderHistogram } from './charts/histogram.js';
+import { renderBoxPlot } from './charts/boxPlot.js';
+
+// Track current persona
+let currentPersona = 'student';
+
 function debounce(fn, delay = 150) {
   let timer;
   return function (...args) {
     clearTimeout(timer);
-    timer = setTimeout(() => {
-      fn.apply(this, args);
-    }, delay);
+    timer = setTimeout(() => { fn.apply(this, args); }, delay);
   };
 }
 
-// ---- Refresh callback (debounced) ----
 const refreshAll = function () {
   const data = getFiltered();
   const countEl = document.getElementById('recordCount');
   if (countEl) countEl.textContent = data.length.toLocaleString();
 
-  // Use requestAnimationFrame to batch DOM updates
   requestAnimationFrame(() => {
+    // Always render KPIs, insights, timeline, and search
     renderKPIs(data);
-    renderTrend(data);
-    renderMajorBar(data);
-    renderDonut(data);
-    renderScatter(data);
-    renderDrilldown(data);
-    renderHeatmap(data);
-    renderParallel(data);
     renderInsights(data);
     renderSearchHit(data);
     renderTimeline();
+
+    // Conditional rendering based on persona
+    if (currentPersona === 'student') {
+      // Show student view, hide lecturer view
+      document.getElementById('studentView').style.display = 'block';
+      document.getElementById('lecturerView').style.display = 'none';
+
+      // Student charts
+      renderDonut(data);
+      renderUsageBarDual(data);        // GPA vs AI hours (grouped bar)
+      renderScatter(data);
+      renderRadar(data);
+      renderHeatmap('#chartHeatmap', data);   // student heatmap container
+      renderDrilldown(data);
+      renderParallel(data);
+      renderTrend(data);
+      renderPaidPie(data);             // paid plan pie chart
+    } else if (currentPersona === 'lecturer') {
+      // Show lecturer view, hide student view
+      document.getElementById('studentView').style.display = 'none';
+      document.getElementById('lecturerView').style.display = 'block';
+
+      // Lecturer charts
+      renderHeatmap('#chartHeatmapLecturer', data);   // lecturer heatmap container
+      renderScatterMatrix(data);
+      renderHistogram(data);
+      renderBoxPlot(data);
+    }
+    // (Executive persona could be added similarly)
   });
 };
 
-// Expose debounced version globally
 window.__refreshAll = debounce(refreshAll, 150);
 
-// ---- Apply Persona ----
+// Set paid filter (called from pie chart)
+window.__setPaidFilter = (isPaid) => {
+  state.paidFilter = isPaid;
+  window.__refreshAll();
+};
+
 function applyPersona(persona) {
+  currentPersona = persona;  // update global
+
   d3.selectAll('.persona-card').classed('active', false);
   d3.select(`.persona-card[data-persona="${persona}"]`).classed('active', true);
 
@@ -74,29 +108,30 @@ function applyPersona(persona) {
     searchWrap.style.display = 'flex';
   }
 
-  // Debounced refresh after persona change
+  const details = document.querySelector('details');
+  if (persona === 'student' || persona === 'lecturer') {
+    details.style.display = 'block';
+  } else {
+    details.style.display = 'none';
+  }
+
   window.__refreshAll();
 }
 
-// ---- Page navigation ----
 function navigateTo(page) {
   document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   document.querySelectorAll('.navitem').forEach(el => el.classList.remove('active'));
   document.querySelector(`.navitem[data-page="${page}"]`).classList.add('active');
-  // Re-render visible page content (debounced)
   window.__refreshAll();
 }
 
-// ---- Attach UI listeners ----
 function attachUIListeners() {
-  // Persona cards
   d3.selectAll('.persona-card').on('click', function () {
     const persona = this.dataset.persona;
     applyPersona(persona);
   });
 
-  // Theme toggles
   d3.selectAll('.hero-theme-toggles button').on('click', function () {
     const theme = this.dataset.theme;
     d3.selectAll('.hero-theme-toggles button').classed('active', false);
@@ -109,7 +144,6 @@ function attachUIListeners() {
     window.__refreshAll();
   });
 
-  // Font slider – only update CSS variable, no full re-render needed
   const slider = document.getElementById('fontSlider');
   const label = document.getElementById('fontSizeLabel');
   slider.addEventListener('input', function () {
@@ -118,13 +152,11 @@ function attachUIListeners() {
     document.documentElement.style.setProperty('--font-scale', val);
   });
 
-  // Sidebar navigation
   d3.selectAll('.navitem').on('click', function () {
     const page = this.dataset.page;
     navigateTo(page);
   });
 
-  // Reset button
   d3.select('#resetBtn').on('click', () => {
     state.major = 'all';
     state.year = 'all';
@@ -137,6 +169,7 @@ function attachUIListeners() {
     state.scatterBrush = null;
     state.parallelBrush = null;
     state.drillYear = null;
+    state.paidFilter = null;
 
     d3.select('#f-major').property('value', 'all');
     d3.select('#f-year').property('value', 'all');
@@ -148,81 +181,37 @@ function attachUIListeners() {
     window.__refreshAll();
   });
 
-  // Filters – all use debounced refresh
   d3.select('#f-major').on('change', function () { state.major = this.value; window.__refreshAll(); });
   d3.select('#f-year').on('change', function () { state.year = this.value; window.__refreshAll(); });
   d3.select('#f-policy').on('change', function () { state.policy = this.value; window.__refreshAll(); });
   d3.select('#f-month').on('change', function () { state.month = this.value; window.__refreshAll(); });
 
-  // Slider – use 'change' event (only fires when user releases) + update label on input but not refresh
   const hoursSlider = document.getElementById('f-hours');
   const rangeLabel = document.getElementById('rangeLbl');
   hoursSlider.addEventListener('input', function () {
     rangeLabel.textContent = this.value + 'h+';
-    // update state immediately but defer refresh
     state.minHours = +this.value;
-    // refresh will be triggered on 'change' below
   });
-  hoursSlider.addEventListener('change', function () {
-    // only refresh when user stops sliding
-    window.__refreshAll();
-  });
+  hoursSlider.addEventListener('change', function () { window.__refreshAll(); });
 
-  // Search – debounced on input
   const searchInput = document.getElementById('f-search');
   searchInput.addEventListener('input', function () {
     state.search = this.value.trim();
     window.__refreshAll();
   });
 
-  // Drill back
   d3.select('#drillBack').on('click', () => {
     state.drillYear = null;
     window.__refreshAll();
   });
 
-  // Window resize – debounced
   let resizeTimer;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      window.__refreshAll();
-    }, 200);
+    resizeTimer = setTimeout(() => { window.__refreshAll(); }, 200);
   });
 }
 
-// ---- Load data ----
-function loadData() {
-  const url = 'public/data/ai_student_impact.csv';
-  d3.csv(url)
-    .then(raw => {
-      if (!raw || raw.length === 0) throw new Error('Empty file');
-      raw.forEach(d => {
-        d.Student_ID = +d.Student_ID;
-        d.Pre_Semester_GPA = +d.Pre_Semester_GPA;
-        d.Weekly_GenAI_Hours = +d.Weekly_GenAI_Hours;
-        d.Tool_Diversity = +d.Tool_Diversity;
-        d.Paid_Subscription = d.Paid_Subscription === 'TRUE' || d.Paid_Subscription === true;
-        d.Traditional_Study_Hours = +d.Traditional_Study_Hours;
-        d.Perceived_AI_Dependency = +d.Perceived_AI_Dependency;
-        d.Anxiety_Level_During_Exams = +d.Anxiety_Level_During_Exams;
-        d.Post_Semester_GPA = +d.Post_Semester_GPA;
-        d.Skill_Retention_Score = +d.Skill_Retention_Score;
-        d.GPA_Improvement = +d.GPA_Improvement;
-      });
-      setData(raw);
-      populateFilters();
-      window.__refreshAll();
-      navigateTo('charts');
-      console.log(`✅ Data loaded (${raw.length} rows)`);
-    })
-    .catch(err => {
-      console.error(err);
-      document.getElementById('recordCount').textContent = '❌ Dataset not found.';
-    });
-}
-
-// ---- Populate filters ----
 function populateFilters() {
   const majors = getMajors();
   const years = getYears();
@@ -250,6 +239,62 @@ function populateFilters() {
     .attr('class', 'dyn').attr('value', d => d).text(d => d);
 }
 
-// ---- Init ----
+function loadData() {
+  const url = 'public/data/ai_student_impact.csv';
+  d3.csv(url)
+    .then(raw => {
+      if (!raw || raw.length === 0) throw new Error('Empty file');
+      raw.forEach(d => {
+        d.Student_ID = +d.Student_ID;
+        d.Pre_Semester_GPA = +d.Pre_Semester_GPA;
+        d.Weekly_GenAI_Hours = +d.Weekly_GenAI_Hours;
+        d.Tool_Diversity = +d.Tool_Diversity;
+        d.Paid_Subscription = d.Paid_Subscription === 'TRUE' || d.Paid_Subscription === true;
+        d.Traditional_Study_Hours = +d.Traditional_Study_Hours;
+        d.Perceived_AI_Dependency = +d.Perceived_AI_Dependency;
+        d.Anxiety_Level_During_Exams = +d.Anxiety_Level_During_Exams;
+        d.Post_Semester_GPA = +d.Post_Semester_GPA;
+        d.Skill_Retention_Score = +d.Skill_Retention_Score;
+        d.GPA_Improvement = +d.GPA_Improvement;
+      });
+      setData(raw);
+      populateFilters();
+      window.__refreshAll();
+      navigateTo('charts');
+      console.log(`✅ Data loaded (${raw.length} rows)`);
+    })
+    .catch(err => {
+      console.error(err);
+      document.getElementById('recordCount').textContent = '❌ Dataset not found.';
+      // fallback
+      d3.csv('ai_student_impact.csv')
+        .then(raw => {
+          if (!raw || raw.length === 0) throw new Error('Empty file');
+          raw.forEach(d => {
+            d.Student_ID = +d.Student_ID;
+            d.Pre_Semester_GPA = +d.Pre_Semester_GPA;
+            d.Weekly_GenAI_Hours = +d.Weekly_GenAI_Hours;
+            d.Tool_Diversity = +d.Tool_Diversity;
+            d.Paid_Subscription = d.Paid_Subscription === 'TRUE' || d.Paid_Subscription === true;
+            d.Traditional_Study_Hours = +d.Traditional_Study_Hours;
+            d.Perceived_AI_Dependency = +d.Perceived_AI_Dependency;
+            d.Anxiety_Level_During_Exams = +d.Anxiety_Level_During_Exams;
+            d.Post_Semester_GPA = +d.Post_Semester_GPA;
+            d.Skill_Retention_Score = +d.Skill_Retention_Score;
+            d.GPA_Improvement = +d.GPA_Improvement;
+          });
+          setData(raw);
+          populateFilters();
+          window.__refreshAll();
+          navigateTo('charts');
+          console.log(`✅ Data loaded (fallback) (${raw.length} rows)`);
+        })
+        .catch(err2 => {
+          console.error('Fallback load also failed:', err2);
+          document.getElementById('recordCount').textContent = '❌ Dataset not found. Please check the CSV file path.';
+        });
+    });
+}
+
 attachUIListeners();
 loadData();

@@ -1,10 +1,11 @@
+// js/charts/heatmap.js
 import { themeColors, showTip, hideTip } from '../utils/helpers.js';
 import { state, getRawData } from '../state.js';
 
-export function renderHeatmap(data) {
+export function renderHeatmap(selector, data) {
   const C = themeColors();
   const RAW_DATA = getRawData();
-  const el = d3.select('#chartHeatmap');
+  const el = d3.select(selector);
   el.selectAll('*').remove();
   const useCases = Array.from(new Set(RAW_DATA.map(d => d.Primary_Use_Case)));
   const W = el.node().clientWidth || 900, H = 300, M = { t: 16, r: 16, b: 80, l: 100 };
@@ -41,7 +42,9 @@ export function renderHeatmap(data) {
       if (window.__refreshAll) window.__refreshAll();
     });
 
-  const legend = d3.select('#heatLegend');
+  // Legend: choose correct legend container based on selector
+  const legendId = selector === '#chartHeatmap' ? '#heatLegend' : '#heatLegendLecturer';
+  const legend = d3.select(legendId);
   legend.selectAll('*').remove();
   legend.append('span').html(`<i style="background:${C.red}"></i> GPA decline`);
   legend.append('span').html(`<i style="background:${C.surface3};border:1px solid var(--border)"></i> ~no change`);
