@@ -263,7 +263,7 @@ function populateFilters() {
 }
 
 function loadData() {
-  const url = 'public/data/ai_student_impact.csv';
+  const url = '/data/ai_student_impact.csv';
   d3.csv(url)
     .then(raw => {
       if (!raw || raw.length === 0) throw new Error('Empty file');
