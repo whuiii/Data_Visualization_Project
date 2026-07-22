@@ -6,17 +6,25 @@ export function renderStackedBar(data) {
   const C = themeColors();
   const el = d3.select('#chartStackedBar');
   el.selectAll('*').remove();
-  const W = el.node().clientWidth || 600,
-    H = 280,
-    M = { t: 20, r: 20, b: 40, l: 50 };
+
+  // Use the container's width for responsiveness
+  const containerWidth = el.node().clientWidth || 600;
+  // Set a fixed height that scales with width (keep it proportional)
+  const aspectRatio = 0.6; // height/width
+  const W = Math.min(containerWidth, 800);
+  const H = W * aspectRatio;
+
+  // Reduced margins: smaller bottom to avoid extra white space
+  const M = { t: 16, r: 20, b: 28, l: 55 };
+
   const svg = el
     .append('svg')
     .attr('width', '100%')
-    .attr('height', H)
-    .attr('viewBox', `0 0 ${W} ${H}`);
+    .attr('height', 'auto')
+    .attr('viewBox', `0 0 ${W} ${H}`)
+    .style('display', 'block');
 
   const usageLevels = ['Low', 'Moderate', 'High', 'Very High'];
-  // Filter years that exist in the data
   const availableYears = YEAR_ORDER.filter((y) =>
     data.some((d) => d.Year_of_Study === y)
   );
@@ -58,7 +66,7 @@ export function renderStackedBar(data) {
   const colorScale = d3
     .scaleOrdinal()
     .domain(usageLevels)
-    .range(['#e3f2fd', '#90caf9', '#42a5f5', '#0d47a1']); // Light to dark blue
+    .range(['#e3f2fd', '#90caf9', '#42a5f5', '#0d47a1']);
 
   // Axes
   const xAxis = d3.axisBottom(xScale);
@@ -68,12 +76,17 @@ export function renderStackedBar(data) {
     .append('g')
     .attr('class', 'axis')
     .attr('transform', `translate(0, ${H - M.b})`)
-    .call(xAxis);
+    .call(xAxis)
+    .style('font-family', 'Roboto Mono, monospace')
+    .style('font-size', '10px');
+
   svg
     .append('g')
     .attr('class', 'axis')
     .attr('transform', `translate(${M.l}, 0)`)
-    .call(yAxis);
+    .call(yAxis)
+    .style('font-family', 'Roboto Mono, monospace')
+    .style('font-size', '10px');
 
   // Grid lines
   svg

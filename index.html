@@ -24,14 +24,18 @@
                     <rect x="25" y="9" width="5" height="22" rx="1.4" fill="var(--accent)" />
                 </svg>
                 <div class="brand-text">
-                    <b>Group 6</b>
-                    <span>AI × Student Outcomes</span>
+                    <b>AI Student Analytics</b>
+                    <span>GenAI × Academic Outcomes</span>
                 </div>
             </div>
             <div class="nav-label">Navigate</div>
             <div class="navitem active" data-page="charts">
                 <span class="nav-icon">📊</span>
-                <span class="nav-label-text">Charts</span>
+                <span class="nav-label-text">Overview</span>
+            </div>
+            <div class="navitem" data-page="advanced">
+                <span class="nav-icon">📈</span>
+                <span class="nav-label-text">Advanced</span>
             </div>
             <div class="navitem" data-page="timeline">
                 <span class="nav-icon">📅</span>
@@ -144,16 +148,17 @@
             <!-- PAGES -->
             <div class="content">
 
-                <!-- PAGE: CHARTS -->
+                <!-- ============================================================ -->
+                <!-- PAGE: OVERVIEW (CHARTS)                                       -->
+                <!-- ============================================================ -->
                 <section id="page-charts" class="page active">
-                    <div class="section-heading"><span class="num">📊</span> Charts</div>
+                    <div class="section-heading"><span class="num">📊</span> Overview</div>
 
                     <!-- KPI Row -->
                     <div class="kpi-row" id="kpiRow"></div>
 
                     <!-- STUDENT VIEW -->
                     <div id="studentView">
-                        <!-- Row 1: Donut + Dual Bar -->
                         <div class="grid-half">
                             <div class="card">
                                 <div class="card-head">
@@ -180,7 +185,6 @@
                             </div>
                         </div>
 
-                        <!-- Row 2: Radar + Paid Pie -->
                         <div class="grid-half">
                             <div class="card">
                                 <div class="card-head">
@@ -207,7 +211,6 @@
                             </div>
                         </div>
 
-                        <!-- Row 3: Scatter (full width) -->
                         <div class="card">
                             <div class="card-head">
                                 <div>
@@ -225,7 +228,6 @@
 
                     <!-- LECTURER VIEW -->
                     <div id="lecturerView" style="display:none;">
-                        <!-- Row 1: Stacked Bar + Histogram -->
                         <div class="grid-half">
                             <div class="card">
                                 <div class="card-head">
@@ -252,7 +254,6 @@
                             </div>
                         </div>
 
-                        <!-- Row 2: Monthly Trends (full width) -->
                         <div class="card">
                             <div class="card-head">
                                 <div>
@@ -266,7 +267,6 @@
                             <div class="legend" id="usageLineLegend"></div>
                         </div>
 
-                        <!-- Row 3: Scatter Matrix (full width) -->
                         <div class="card">
                             <div class="card-head">
                                 <div>
@@ -309,7 +309,7 @@
                         <div class="card">
                             <div class="card-head">
                                 <div>
-                                    <div class="fig">FIG. E4</div>
+                                    <div class="fig">FIG. E3</div>
                                     <h3>Distribution of AI Usage Across Student Groups</h3>
                                     <p>Treemap showing student count (area) and average AI usage hours (colour) per major – quickly identify which programmes have highest AI adoption.</p>
                                 </div>
@@ -320,141 +320,85 @@
                         </div>
                     </div>
 
-                    
-
-                    <!-- SHARED ADVANCED CHARTS (visible to all personas) -->
-                    <details style="margin-top:24px; cursor:pointer; color:var(--text-muted);">
-                        <summary style="font-weight:600; font-size:14px; padding:8px 0;">🔍 Advanced charts (drilldown, heatmap, parallel, trend) — click to expand</summary>
-                        <div style="margin-top:12px;">
-                            <!-- Drilldown -->
-                            <div class="card">
-                                <div class="card-head">
-                                    <div>
-                                        <div class="fig">FIG. 6</div>
-                                        <h3>Cohort by year of study</h3>
-                                        <p>Click a bar to drill into that year's majors.</p>
-                                    </div>
-                                    <span class="card-tag feat">Drill‑down</span>
-                                </div>
-                                <div class="backbtn interactive" id="drillBack">← Back to all years</div>
-                                <div id="chartDrilldown"></div>
-                            </div>
-
-                            <!-- Heatmap (shared) -->
-                            <div class="card advanced-chart">
-                                <div class="card-head">
-                                    <div>
-                                        <div class="fig">FIG. 7</div>
-                                        <h3>Heat map — Major × Primary use case</h3>
-                                        <p>GPA change by colour. Click a cell to filter.</p>
-                                    </div>
-                                    <span class="card-tag feat">Hover + click filter</span>
-                                </div>
-                                <div id="chartHeatmap"></div>
-                                <div class="legend" id="heatLegend"></div>
-                            </div>
-
-                            <!-- Parallel -->
-                            <div class="card advanced-chart">
-                                <div class="card-head">
-                                    <div>
-                                        <div class="fig">FIG. 8</div>
-                                        <h3>Parallel coordinates — multivariate profiles</h3>
-                                        <p>Drag any axis to brush and cross‑filter. (Shows a representative sample of up to 5,000 records.)</p>
-                                    </div>
-                                    <span class="card-tag feat">Brush any axis</span>
-                                </div>
-                                <div id="chartParallel"></div>
-                                <div class="legend" id="parallelLegend"></div>
-                            </div>
-
-                            <!-- Trend -->
-                            <div class="card">
-                                <div class="card-head">
-                                    <div>
-                                        <div class="fig">FIG. 9</div>
-                                        <h3>Monthly trajectory, Feb → Jun</h3>
-                                        <p>Average GPA improvement (green) against average exam‑anxiety (blue).</p>
-                                    </div>
-                                    <span class="card-tag feat">Dual‑axis</span>
-                                </div>
-                                <div id="chartTrend"></div>
-                                <div class="legend" id="trendLegend"></div>
-                            </div>
-                        </div>
-                    </details>
-
                 </section>
 
-                <!-- PAGE: TIMELINE -->
-                 <!-- <section id="page-timeline" class="page">
-                <div class="section-heading"><span class="num">📅</span> Project Timeline</div>
+                <!-- ============================================================ -->
+                <!-- PAGE: ADVANCED ANALYTICS                                      -->
+                <!-- ============================================================ -->
+                <section id="page-advanced" class="page">
+                    <div class="section-heading"><span class="num">📈</span> Advanced Analytics</div>
+                    <p style="color:var(--text-muted); margin-bottom:20px; font-size:14px;">
+                        Deeper multivariate and cohort‑level charts – drilldown, heatmaps, parallel coordinates, and monthly trajectories.
+                    </p>
 
-                <div class="card" style="padding:0; overflow:hidden;">
-                    <div class="card-head" style="padding:18px 24px 14px;">
-                        <div>
-                            <div class="fig">FIG. 10</div>
-                            <h3>Project Progress Timeline</h3>
-                            <p>Six‑milestone build timeline fused with weekly dataset trends – zoom/pan, click a milestone for details.</p>
+                    <!-- Drilldown -->
+                    <div class="card">
+                        <div class="card-head">
+                            <div>
+                                <div class="fig">FIG. A1</div>
+                                <h3>Cohort by year of study</h3>
+                                <p>Click a bar to drill into that year's majors.</p>
+                            </div>
+                            <span class="card-tag feat">Drill‑down</span>
                         </div>
-                        <span class="card-tag feat">Zoom · Pan · Click</span>
-                    </div> -->
-
-                    <!-- Controls -->
-                    <!-- <div class="fig-controls" style="display:flex; flex-wrap:wrap; gap:8px; padding:8px 24px 12px; border-bottom:1px solid var(--border);">
-                        <button class="ctrl-btn interactive" id="tlZoomIn" style="font-family:'Roboto Mono',monospace; font-size:11px; border:1px solid var(--border); background:var(--surface-2); padding:4px 14px; border-radius:6px; cursor:pointer;">🔍 Zoom in</button>
-                        <button class="ctrl-btn interactive" id="tlZoomOut" style="font-family:'Roboto Mono',monospace; font-size:11px; border:1px solid var(--border); background:var(--surface-2); padding:4px 14px; border-radius:6px; cursor:pointer;">🔍 Zoom out</button>
-                        <button class="ctrl-btn interactive" id="tlReset" style="font-family:'Roboto Mono',monospace; font-size:11px; border:1px solid var(--border); background:var(--surface-2); padding:4px 14px; border-radius:6px; cursor:pointer;">⟲ Reset view</button>
-                        <span style="font-family:'Roboto Mono',monospace; font-size:10px; color:var(--text-faint); margin-left:6px;">Trend metric:</span>
-                        <button class="metric-btn active interactive" data-metric="gpaChange" style="font-family:'Roboto Mono',monospace; font-size:10px; border:1px solid var(--border); background:var(--surface-2); padding:3px 10px; border-radius:20px; cursor:pointer;">GPA Δ</button>
-                        <button class="metric-btn interactive" data-metric="aiHours" style="font-family:'Roboto Mono',monospace; font-size:10px; border:1px solid var(--border); background:var(--surface-2); padding:3px 10px; border-radius:20px; cursor:pointer;">AI hrs/wk</button>
-                        <button class="metric-btn interactive" data-metric="highBurnout" style="font-family:'Roboto Mono',monospace; font-size:10px; border:1px solid var(--border); background:var(--surface-2); padding:3px 10px; border-radius:20px; cursor:pointer;">High burnout %</button>
-                    </div> -->
-
-                    <!-- Chart container -->
-                    <!-- <div id="timelineChartWrap" style="overflow-x:auto; padding:8px 6px 4px;">
-                        <div id="chartGanttTimeline" style="min-width:760px;"></div>
-                    </div> -->
-
-                    <!-- Detail panel -->
-                    <!-- <div id="timelineDetailPanel" style="border-top:1px solid var(--border); border-left:4px solid var(--accent); background:var(--surface-2); padding:16px 24px; font-size:13px; color:var(--text);">
-                        <span style="color:var(--text-faint); font-family:'Roboto Mono',monospace; font-size:12px;">Click a milestone bar above to see details and dataset statistics.</span>
+                        <div class="backbtn interactive" id="drillBack">← Back to all years</div>
+                        <div id="chartDrilldown"></div>
                     </div>
-                </div>
-            </section> -->
-            <section id="page-timeline" class="page">
-                <div class="section-heading"><span class="num">📅</span> Project Timeline</div>
-                <div class="card">
-                    <div class="card-head">
-                        <div>
-                            <div class="fig">FIG. 10</div>
-                            <h3>Project progress timeline</h3>
-                            <p>Real Feb&ndash;Jun 2026 date axis, fused with the dataset's weekly trend. Zoom / pan, click a milestone for details.</p>
+
+                    <!-- Heatmap -->
+                    <div class="card">
+                        <div class="card-head">
+                            <div>
+                                <div class="fig">FIG. A2</div>
+                                <h3>Heat map — Major × Primary use case</h3>
+                                <p>GPA change by colour. Click a cell to filter.</p>
+                            </div>
+                            <span class="card-tag feat">Hover + click filter</span>
                         </div>
-                        <span class="card-tag feat">Zoom · pan · click</span>
+                        <div id="chartHeatmap"></div>
+                        <div class="legend" id="heatLegend"></div>
                     </div>
-                    <div class="tl-controls">
-                        <button class="interactive" id="tlZoomIn">🔍 Zoom in</button>
-                        <button class="interactive" id="tlZoomOut">🔍 Zoom out</button>
-                        <button class="interactive" id="tlReset">⟲ Reset view</button>
-                        <span class="tl-sep"></span>
-                        <span class="tl-metric-label mono">Trend metric:</span>
-                        <button class="tl-metric-btn active" data-metric="gpaChange">GPA Δ</button>
-                        <button class="tl-metric-btn" data-metric="aiHours">AI hrs/wk</button>
-                        <button class="tl-metric-btn" data-metric="highBurnout">High burnout %</button>
+
+                    <!-- Parallel Coordinates -->
+                    <div class="card">
+                        <div class="card-head">
+                            <div>
+                                <div class="fig">FIG. A3</div>
+                                <h3>Parallel coordinates — multivariate profiles</h3>
+                                <p>Drag any axis to brush and cross‑filter. (Shows a representative sample of up to 5,000 records.)</p>
+                            </div>
+                            <span class="card-tag feat">Brush any axis</span>
+                        </div>
+                        <div id="chartParallel"></div>
+                        <div class="legend" id="parallelLegend"></div>
                     </div>
-                    <div id="chartTimeline"></div>
-                    <div id="milestoneDetail"></div>
-                </div>
-            </section>
-                            <!-- <section id="page-timeline" class="page">
+
+                    <!-- Trend -->
+                    <div class="card">
+                        <div class="card-head">
+                            <div>
+                                <div class="fig">FIG. A4</div>
+                                <h3>Monthly trajectory, Feb → Jun</h3>
+                                <p>Average GPA improvement (green) against average exam‑anxiety (blue).</p>
+                            </div>
+                            <span class="card-tag feat">Dual‑axis</span>
+                        </div>
+                        <div id="chartTrend"></div>
+                        <div class="legend" id="trendLegend"></div>
+                    </div>
+                </section>
+
+                <!-- ============================================================ -->
+                <!-- PAGE: TIMELINE                                               -->
+                <!-- ============================================================ -->
+                <section id="page-timeline" class="page">
                     <div class="section-heading"><span class="num">📅</span> Project Timeline</div>
                     <div class="card">
                         <div class="card-head">
                             <div>
                                 <div class="fig">FIG. 10</div>
                                 <h3>Project progress timeline</h3>
-                                <p>Zoom / pan, click a milestone for details.</p>
+                                <p>Real Feb–Jun 2026 date axis, fused with the dataset's weekly trend. Zoom / pan, click a milestone for details.</p>
                             </div>
                             <span class="card-tag feat">Zoom · pan · click</span>
                         </div>
@@ -462,13 +406,20 @@
                             <button class="interactive" id="tlZoomIn">🔍 Zoom in</button>
                             <button class="interactive" id="tlZoomOut">🔍 Zoom out</button>
                             <button class="interactive" id="tlReset">⟲ Reset view</button>
+                            <span class="tl-sep"></span>
+                            <span class="tl-metric-label mono">Trend metric:</span>
+                            <button class="tl-metric-btn active" data-metric="gpaChange">GPA Δ</button>
+                            <button class="tl-metric-btn" data-metric="aiHours">AI hrs/wk</button>
+                            <button class="tl-metric-btn" data-metric="highBurnout">High burnout %</button>
                         </div>
                         <div id="chartTimeline"></div>
                         <div id="milestoneDetail"></div>
                     </div>
-                </section> -->
+                </section>
 
-                <!-- PAGE: INSIGHTS -->
+                <!-- ============================================================ -->
+                <!-- PAGE: INSIGHTS                                               -->
+                <!-- ============================================================ -->
                 <section id="page-insights" class="page">
                     <div class="section-heading"><span class="num">💡</span> Insights &amp; Recommendations</div>
                     <div id="insightsWrap"></div>

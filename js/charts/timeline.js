@@ -12,8 +12,6 @@ const METRICS = {
 
 const parseDate = d3.timeParse('%Y-%m-%d');
 // The dataset's Date column includes a "00:00:00" time component
-// (e.g. "2026-02-01 00:00:00"), so parse with that format and fall
-// back to date-only in case a cleaned version of the CSV is swapped in later.
 const parseCsvDate = d3.timeParse('%Y-%m-%d %H:%M:%S');
 const parseCsvDateFallback = d3.timeParse('%Y-%m-%d');
 function parseRowDate(raw) {
@@ -22,11 +20,9 @@ function parseRowDate(raw) {
 }
 const fmtAxis = d3.timeFormat('%b %d');
 
-// Module-level cache so re-visiting the timeline page doesn't refetch the CSV.
 let RAW = null, WEEKLY = null, loading = null;
 const state = { metric: 'gpaChange', selected: MILESTONES[0].key };
 
-/* ---- entry point called by the dashboard router ---- */
 export function renderTimeline() {
   const el = d3.select('#chartTimeline');
   if (el.empty()) return;
@@ -39,18 +35,14 @@ export function renderTimeline() {
   el.html('<div class="mono" style="color:var(--text-muted); font-size:12.5px; text-align:center; padding:40px 0;">Loading dataset…</div>');
 
   if (!loading) {
-    // Loaded as text (not d3.csv directly) so a leading UTF-8 BOM can be
-    // stripped before the header row is parsed — otherwise the first
-    // column key comes through as "\uFEFFDate" instead of "Date" and
-    // every row.Date lookup silently returns undefined.
     loading = d3.text(CSV_FILE).then(text => {
       const clean = text.replace(/^\uFEFF/, '');
       const rows = d3.csvParse(clean, row => ({
         date: parseRowDate(row.Date),
         gpaChange: (+row.Post_Semester_GPA) - (+row.Pre_Semester_GPA),
         aiHours: +row.Weekly_GenAI_Hours,
-        burnout: row.Burnout_Risk_Level, // Low | Medium | High
-      })).filter(d => d.date); // drop any row whose date failed to parse
+        burnout: row.Burnout_Risk_Level,
+      })).filter(d => d.date);
       RAW = rows;
       WEEKLY = d3.rollups(
         RAW,
@@ -81,7 +73,8 @@ export function renderTimeline() {
 let x0 = null, currentXs = null, zoomBehavior = null;
 let svg, g, barsG, axisG, trendG, trendAxisG, gridG;
 
-const margin = { top: 16, right: 30, bottom: 36, left: 20 };
+
+const margin = { top: 16, right: 30, bottom: 48, left: 60 };
 const LANE_TOP = 26, LANE_STEP = 44, BAR_H = 26;
 
 function buildChart(el) {
@@ -90,14 +83,11 @@ function buildChart(el) {
   const W = el.node().clientWidth || 1000;
   const FULL_W = W - margin.left - margin.right;
   const AXIS_Y = LANE_TOP + MILESTONES.length * LANE_STEP + 6;
-  const TREND_TOP = AXIS_Y + 34, TREND_H = 120;
+  // 🔧 CHANGED: increased offset from 34 to 60
+  const TREND_TOP = AXIS_Y + 60;
+  const TREND_H = 120;
   const H = TREND_TOP + TREND_H + margin.top + margin.bottom;
 
-  // Don't set width/height as SVG attributes here — "auto" is not a valid
-  // SVG length and will make the browser fall back to a ~150px intrinsic
-  // height, clipping everything below the bars (i.e. the trend chart).
-  // Sizing is handled by CSS (#chartTimeline svg { width:100%; height:auto })
-  // combined with this viewBox.
   svg = el.append('svg').attr('viewBox', `0 0 ${W} ${H}`);
   g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
 
@@ -235,10 +225,10 @@ function redrawTrend(xs, dims) {
 
 function currentDims(xs) {
   const AXIS_Y = LANE_TOP + MILESTONES.length * LANE_STEP + 6;
-  return { FULL_W: xs.range()[1], AXIS_Y, TREND_TOP: AXIS_Y + 34, TREND_H: 120 };
+  return { FULL_W: xs.range()[1], AXIS_Y, TREND_TOP: AXIS_Y + 60, TREND_H: 120 };
 }
 
-/* ---- detail panel: milestone description + matching dataset readout ---- */
+/* ---- detail panel ---- */
 function selectMilestone(key) {
   state.selected = key;
   const m = MILESTONES.find(d => d.key === key);

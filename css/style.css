@@ -1194,8 +1194,16 @@ body.mode-simple .kpi .lbl { font-size: 14px; }
 }
 .tl-metric-btn.active { background: var(--text); border-color: var(--text); color: var(--surface); }
 
-#chartTimeline { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 8px 2px 4px; }
+#chartTimeline { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 60px 2px 4px; }
 #chartTimeline svg { display: block; width: 100%; height: auto; min-width: 640px; }
 
 .bar-g .bar { cursor: pointer; }
 .trend-pt { cursor: pointer; }
+
+#chartTimelineWrap {
+  overflow-x: auto;
+  overflow-y: visible;
+}
+#chartTimeline {
+  min-height: 300px;
+}

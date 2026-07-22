@@ -9,7 +9,6 @@ import { renderHeatmap } from './charts/heatmap.js';
 import { renderParallel } from './charts/parallel.js';
 import { renderTrend } from './charts/trend.js';
 import { renderTimeline } from './charts/timeline.js';
-// import { renderGanttTimeline } from './charts/timelineGantt.js';
 import { renderInsights, renderSearchHit } from './charts/insights.js';
 import { renderUsageBarDual } from './charts/usageBarDual.js';
 import { renderPaidPie } from './charts/paidPie.js';
@@ -23,7 +22,7 @@ import { renderStackedBar } from './charts/stackedBar.js';
 // Executive charts
 import { renderExecutiveTrend } from './charts/executiveTrend.js';
 import { renderExecutiveBar } from './charts/executiveBar.js';
-import { renderExecutiveTreemap } from './charts/executiveTreemap.js'; 
+import { renderExecutiveTreemap } from './charts/executiveTreemap.js';
 
 function debounce(fn, delay = 150) {
   let timer;
@@ -37,12 +36,15 @@ let renderPending = false;
 
 function clearCharts() {
   const selectors = [
-    '#chartDonut', '#chartScatter', '#chartRadar', '#chartDrilldown',
-    '#chartHeatmap', '#chartParallel', '#chartTrend', '#chartPaidPie',
+    // Overview page
+    '#chartDonut', '#chartScatter', '#chartRadar', '#chartPaidPie',
     '#chartUsageBarDual', '#chartHeatmapLecturer', '#chartScatterMatrix',
     '#chartHistogram', '#chartUsageLine', '#chartStackedBar',
     '#chartExecutiveTrend', '#chartExecutiveBar', '#chartExecutiveTreemap',
-    '#chartTimeline' 
+    // Advanced page
+    '#chartDrilldown', '#chartHeatmap', '#chartParallel', '#chartTrend',
+    // Timeline
+    '#chartTimeline'
   ];
   selectors.forEach(sel => d3.select(sel).selectAll('*').remove());
 }
@@ -63,10 +65,9 @@ const refreshAll = function () {
   renderKPIs(fullData);
   renderInsights(fullData);
   renderSearchHit(fullData);
-  renderTimeline();
-  // renderGanttTimeline(fullData);
+  renderTimeline(fullData);
 
-  // Always render advanced charts (shared across all personas)
+  // Always render advanced charts (shared across all personas, on the Advanced page)
   renderDrilldown(fullData);
   renderHeatmap('#chartHeatmap', fullData);
   renderParallel(fullData, sampledData);
@@ -144,10 +145,6 @@ function applyPersona(persona) {
   // Hide search for executive, show for others
   const searchWrap = document.getElementById('searchWrap');
   if (searchWrap) searchWrap.style.display = (persona === 'executive') ? 'none' : 'flex';
-
-  // Always show advanced charts for all personas (including executive)
-  const details = document.querySelector('details');
-  if (details) details.style.display = 'block';
 
   setTimeout(() => window.__refreshAll(), 50);
 }
