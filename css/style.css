@@ -1115,3 +1115,87 @@ body.mode-simple .kpi .lbl { font-size: 14px; }
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+/* ---- Gantt Timeline styles ---- */
+#chartGanttTimeline svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--surface);
+  border-radius: 8px;
+}
+#chartGanttTimeline .axis text {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 10px;
+  fill: var(--text-faint);
+}
+#chartGanttTimeline .axis path,
+#chartGanttTimeline .axis line {
+  stroke: var(--border);
+}
+#chartGanttTimeline .gridline line {
+  stroke: var(--border);
+  stroke-width: 0.5;
+}
+#chartGanttTimeline .bar {
+  cursor: pointer;
+}
+#chartGanttTimeline .bar-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  fill: var(--text);
+}
+#chartGanttTimeline .trend-label {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 10px;
+  fill: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+#chartGanttTimeline .trend-pt {
+  cursor: pointer;
+}
+#chartGanttTimeline .trend-area {
+  stroke: none;
+}
+#chartGanttTimeline .trend-line {
+  fill: none;
+  stroke-width: 2.2;
+}
+#timelineDetailPanel {
+  transition: border-left-color 0.2s ease;
+}
+.fig-controls .ctrl-btn:hover,
+.fig-controls .metric-btn:hover {
+  background: var(--surface-3);
+  border-color: var(--border-strong);
+}
+.fig-controls .metric-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* Additions for the merged timeline chart — append to your main stylesheet.
+   Reuses existing tokens (--border, --text, --text-muted, --text-faint,
+   --surface) instead of introducing the new theme.css variables. */
+
+.tl-controls {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+}
+.tl-sep { width: 1px; align-self: stretch; background: var(--border); margin: 0 4px; }
+.tl-metric-label { font-size: 11px; color: var(--text-faint); text-transform: uppercase; letter-spacing: .05em; }
+.tl-metric-btn {
+  font-family: var(--font-mono, monospace); font-size: 11.5px;
+  border: 1px solid var(--border); background: transparent; color: var(--text-muted);
+  padding: 6px 12px; border-radius: 100px; cursor: pointer;
+}
+.tl-metric-btn.active { background: var(--text); border-color: var(--text); color: var(--surface); }
+
+#chartTimeline { overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 8px 2px 4px; }
+#chartTimeline svg { display: block; width: 100%; height: auto; min-width: 640px; }
+
+.bar-g .bar { cursor: pointer; }
+.trend-pt { cursor: pointer; }

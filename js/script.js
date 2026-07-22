@@ -9,6 +9,7 @@ import { renderHeatmap } from './charts/heatmap.js';
 import { renderParallel } from './charts/parallel.js';
 import { renderTrend } from './charts/trend.js';
 import { renderTimeline } from './charts/timeline.js';
+// import { renderGanttTimeline } from './charts/timelineGantt.js';
 import { renderInsights, renderSearchHit } from './charts/insights.js';
 import { renderUsageBarDual } from './charts/usageBarDual.js';
 import { renderPaidPie } from './charts/paidPie.js';
@@ -22,7 +23,7 @@ import { renderStackedBar } from './charts/stackedBar.js';
 // Executive charts
 import { renderExecutiveTrend } from './charts/executiveTrend.js';
 import { renderExecutiveBar } from './charts/executiveBar.js';
-import { renderExecutiveTreemap } from './charts/executiveTree.js';
+import { renderExecutiveTreemap } from './charts/executiveTreemap.js'; 
 
 function debounce(fn, delay = 150) {
   let timer;
@@ -39,7 +40,9 @@ function clearCharts() {
     '#chartDonut', '#chartScatter', '#chartRadar', '#chartDrilldown',
     '#chartHeatmap', '#chartParallel', '#chartTrend', '#chartPaidPie',
     '#chartUsageBarDual', '#chartHeatmapLecturer', '#chartScatterMatrix',
-    '#chartHistogram', '#chartUsageLine', '#chartStackedBar' ,'#chartExecutiveTrend', '#chartExecutiveBar', '#chartExecutiveTreemap' 
+    '#chartHistogram', '#chartUsageLine', '#chartStackedBar',
+    '#chartExecutiveTrend', '#chartExecutiveBar', '#chartExecutiveTreemap',
+    '#chartTimeline' 
   ];
   selectors.forEach(sel => d3.select(sel).selectAll('*').remove());
 }
@@ -61,6 +64,7 @@ const refreshAll = function () {
   renderInsights(fullData);
   renderSearchHit(fullData);
   renderTimeline();
+  // renderGanttTimeline(fullData);
 
   // Always render advanced charts (shared across all personas)
   renderDrilldown(fullData);
