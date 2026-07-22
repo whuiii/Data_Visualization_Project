@@ -61,5 +61,5 @@ export function renderParallel(fullData, sampledData) {
   const legend = d3.select('#parallelLegend');
   legend.selectAll('*').remove();
   ['Low', 'Medium', 'High'].forEach(l => { const s = legend.append('span'); s.append('i').style('background', bColor(l)); s.append('text').text('Burnout: ' + l); });
-  legend.append('span').text('Drag any axis to brush · hover a line to trace one student');
+  
 }
