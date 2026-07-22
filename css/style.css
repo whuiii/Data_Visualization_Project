@@ -633,7 +633,7 @@ h1, h2, h3, h4 {
     font-size: 1.6rem;
     font-weight: 700;
     color: var(--text);
-    margin: 36px 0 20px;
+    margin: 10px 0 20px;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -871,9 +871,24 @@ body.mode-simple .kpi .lbl { font-size: 14px; }
     width: 100%;
     height: auto;
 }
+
+/* ---- NEW: scale all SVG text using the font-size variable ---- */
+svg text,
+.axis text,
+.gridline text,
+.tick text,
+.bar-label,
+.trend-label,
+.radar-legend,
+.legend text,
+.tooltip,
+#chartTimeline text,
+#chartGanttTimeline text {
+    font-size: calc(12px * var(--font-scale, 1)) !important;
+}
+
+/* Keep specific sizes for headings etc. but they already inherit from body */
 .axis text {
-    fill: var(--text-faint);
-    font-size: 12px;
     font-family: 'Roboto Mono', monospace;
 }
 .axis path, .axis line {
