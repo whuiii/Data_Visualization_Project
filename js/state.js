@@ -13,12 +13,23 @@ export const state = {
   scatterBrush: null,
   parallelBrush: null,
   drillYear: null,
-  paidFilter: null,        // true = paid only, false = free only, null = all
+  paidFilter: null,
+  persona: 'student',
 };
+
+// Sampling size for point-heavy charts
+export const RENDER_SAMPLE_SIZE = 5000;
 
 let RAW_DATA = [];
 export function setData(data) { RAW_DATA = data; }
 export function getRawData() { return RAW_DATA; }
+
+// Deterministic sampling: every nth element
+export function sampleData(data, maxSize) {
+  if (data.length <= maxSize) return data;
+  const step = Math.ceil(data.length / maxSize);
+  return data.filter((_, i) => i % step === 0);
+}
 
 export function getFiltered() {
   return RAW_DATA.filter(d => {
@@ -39,10 +50,14 @@ export function getFiltered() {
         if (d[dim] < lo || d[dim] > hi) return false;
       }
     }
-    // New paid filter
     if (state.paidFilter !== null && d.Paid_Subscription !== state.paidFilter) return false;
     return true;
   });
+}
+
+export function getFilteredSampled() {
+  const filtered = getFiltered();
+  return sampleData(filtered, RENDER_SAMPLE_SIZE);
 }
 
 export function getMajors() {

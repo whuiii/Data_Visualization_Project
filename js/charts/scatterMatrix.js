@@ -1,7 +1,7 @@
 // js/charts/scatterMatrix.js
 import { themeColors, showTip, hideTip } from '../utils/helpers.js';
 
-export function renderScatterMatrix(data) {
+export function renderScatterMatrix(fullData, sampledData) {
   const C = themeColors();
   const el = d3.select('#chartScatterMatrix');
   el.selectAll('*').remove();
@@ -24,7 +24,10 @@ export function renderScatterMatrix(data) {
     .attr('height', size)
     .attr('viewBox', `0 0 ${size} ${size}`);
 
-  // Build matrix cells
+  // Use fullData for scales, sampledData for points
+  const dataForScales = fullData.length ? fullData : [];
+  const dataForPoints = sampledData;
+
   for (let i = 0; i < n; i++) {
     for (let j = 0; j < n; j++) {
       const g = svg.append('g')
@@ -46,11 +49,11 @@ export function renderScatterMatrix(data) {
       const xVar = variables[j].key;
       const yVar = variables[i].key;
       const xScaleLocal = d3.scaleLinear()
-        .domain(d3.extent(data, d => d[xVar]))
+        .domain(d3.extent(dataForScales, d => d[xVar]))
         .nice()
         .range([0, cellSize]);
       const yScaleLocal = d3.scaleLinear()
-        .domain(d3.extent(data, d => d[yVar]))
+        .domain(d3.extent(dataForScales, d => d[yVar]))
         .nice()
         .range([cellSize, 0]);
 
@@ -66,7 +69,7 @@ export function renderScatterMatrix(data) {
         axisG.selectAll('text').style('font-size', '8px').style('fill', 'var(--text-faint)');
       }
 
-      const points = data.map(d => ({ x: d[xVar], y: d[yVar], student: d }));
+      const points = dataForPoints.map(d => ({ x: d[xVar], y: d[yVar], student: d }));
       g.selectAll('circle')
         .data(points)
         .enter()

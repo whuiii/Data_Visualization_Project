@@ -1,4 +1,4 @@
-// js/charts/boxPlot.js
+// js/charts/boxplot.js
 import { themeColors, showTip, hideTip } from '../utils/helpers.js';
 
 export function renderBoxPlot(data) {
@@ -33,7 +33,6 @@ export function renderBoxPlot(data) {
     const upper = Math.min(d3.max(sorted), q3 + 1.5 * iqr);
     const xPos = x(d.lvl) + x.bandwidth() / 2;
 
-    // Box
     svg.append('rect')
       .attr('x', x(d.lvl))
       .attr('y', y(q3))
@@ -43,7 +42,6 @@ export function renderBoxPlot(data) {
       .attr('stroke', 'var(--text)')
       .attr('stroke-width', 1.5);
 
-    // Median line
     svg.append('line')
       .attr('x1', x(d.lvl))
       .attr('x2', x(d.lvl) + x.bandwidth())
@@ -52,7 +50,6 @@ export function renderBoxPlot(data) {
       .attr('stroke', 'var(--accent)')
       .attr('stroke-width', 2);
 
-    // Whiskers
     svg.append('line')
       .attr('x1', xPos)
       .attr('x2', xPos)
@@ -68,7 +65,6 @@ export function renderBoxPlot(data) {
       .attr('stroke', 'var(--text)')
       .attr('stroke-width', 1);
 
-    // Outliers
     const outliers = sorted.filter(v => v < lower || v > upper);
     svg.selectAll(`.outlier-${d.lvl}`)
       .data(outliers)

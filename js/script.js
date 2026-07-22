@@ -1,4 +1,5 @@
-import { state, setData, getFiltered, getMajors, getYears, getPolicies, getMonths } from './state.js';
+// js/script.js
+import { state, setData, getFiltered, getFilteredSampled, getMajors, getYears, getPolicies, getMonths } from './state.js';
 import { renderKPIs } from './charts/kpi.js';
 import { renderDonut } from './charts/donut.js';
 import { renderScatter } from './charts/scatter.js';
@@ -15,10 +16,7 @@ import { renderPaidPie } from './charts/paidPie.js';
 // Lecturer charts
 import { renderScatterMatrix } from './charts/scatterMatrix.js';
 import { renderHistogram } from './charts/histogram.js';
-import { renderBoxPlot } from './charts/boxPlot.js';
-
-// Track current persona
-let currentPersona = 'student';
+import { renderBoxPlot } from './charts/boxplot.js';
 
 function debounce(fn, delay = 150) {
   let timer;
@@ -28,60 +26,83 @@ function debounce(fn, delay = 150) {
   };
 }
 
+let renderPending = false;
+
+function clearCharts() {
+  const selectors = [
+    '#chartDonut', '#chartScatter', '#chartRadar', '#chartDrilldown',
+    '#chartHeatmap', '#chartParallel', '#chartTrend', '#chartPaidPie',
+    '#chartUsageBarDual', '#chartHeatmapLecturer', '#chartScatterMatrix',
+    '#chartHistogram', '#chartBoxPlot'
+  ];
+  selectors.forEach(sel => d3.select(sel).selectAll('*').remove());
+}
+
 const refreshAll = function () {
-  const data = getFiltered();
+  const fullData = getFiltered();
+  const sampledData = getFilteredSampled();
+
   const countEl = document.getElementById('recordCount');
-  if (countEl) countEl.textContent = data.length.toLocaleString();
+  if (countEl) countEl.textContent = fullData.length.toLocaleString();
+
+  if (renderPending) return;
+  renderPending = true;
+
+  clearCharts();
+
+  // Always render shared components
+  renderKPIs(fullData);
+  renderInsights(fullData);
+  renderSearchHit(fullData);
+  renderTimeline();
+
+  // Always render advanced charts (shared across all personas)
+  renderDrilldown(fullData);
+  renderHeatmap('#chartHeatmap', fullData);
+  renderParallel(fullData, sampledData);
+  renderTrend(fullData);
+
+  const persona = state.persona;
+  const studentView = document.getElementById('studentView');
+  const lecturerView = document.getElementById('lecturerView');
+
+  if (persona === 'student' || persona === 'executive') {
+    if (studentView) studentView.style.display = 'block';
+    if (lecturerView) lecturerView.style.display = 'none';
+  } else if (persona === 'lecturer') {
+    if (studentView) studentView.style.display = 'none';
+    if (lecturerView) lecturerView.style.display = 'block';
+  }
 
   requestAnimationFrame(() => {
-    // Always render KPIs, insights, timeline, and search
-    renderKPIs(data);
-    renderInsights(data);
-    renderSearchHit(data);
-    renderTimeline();
-
-    // Conditional rendering based on persona
-    if (currentPersona === 'student') {
-      // Show student view, hide lecturer view
-      document.getElementById('studentView').style.display = 'block';
-      document.getElementById('lecturerView').style.display = 'none';
-
-      // Student charts
-      renderDonut(data);
-      renderUsageBarDual(data);        // GPA vs AI hours (grouped bar)
-      renderScatter(data);
-      renderRadar(data);
-      renderHeatmap('#chartHeatmap', data);   // student heatmap container
-      renderDrilldown(data);
-      renderParallel(data);
-      renderTrend(data);
-      renderPaidPie(data);             // paid plan pie chart
-    } else if (currentPersona === 'lecturer') {
-      // Show lecturer view, hide student view
-      document.getElementById('studentView').style.display = 'none';
-      document.getElementById('lecturerView').style.display = 'block';
-
-      // Lecturer charts
-      renderHeatmap('#chartHeatmapLecturer', data);   // lecturer heatmap container
-      renderScatterMatrix(data);
-      renderHistogram(data);
-      renderBoxPlot(data);
+    if (persona === 'student' || persona === 'executive') {
+      // Student-specific (also used for executive)
+      renderDonut(fullData);
+      renderUsageBarDual(fullData);
+      renderRadar(fullData);
+      renderScatter(fullData, sampledData);
+      renderPaidPie(fullData);
+    } else if (persona === 'lecturer') {
+      // Lecturer-specific
+      renderHeatmap('#chartHeatmapLecturer', fullData);
+      renderScatterMatrix(fullData, sampledData);
+      renderHistogram(fullData);
+      renderBoxPlot(fullData);
     }
-    // (Executive persona could be added similarly)
+    renderPending = false;
   });
 };
 
 window.__refreshAll = debounce(refreshAll, 150);
 
-// Set paid filter (called from pie chart)
+// Paid filter
 window.__setPaidFilter = (isPaid) => {
   state.paidFilter = isPaid;
   window.__refreshAll();
 };
 
 function applyPersona(persona) {
-  currentPersona = persona;  // update global
-
+  state.persona = persona;
   d3.selectAll('.persona-card').classed('active', false);
   d3.select(`.persona-card[data-persona="${persona}"]`).classed('active', true);
 
@@ -101,28 +122,24 @@ function applyPersona(persona) {
 
   body.attr('class', currentTheme + ' ' + modeClass);
 
+  // Hide search for executive, show for others
   const searchWrap = document.getElementById('searchWrap');
-  if (persona === 'executive') {
-    searchWrap.style.display = 'none';
-  } else {
-    searchWrap.style.display = 'flex';
-  }
+  if (searchWrap) searchWrap.style.display = (persona === 'executive') ? 'none' : 'flex';
 
+  // Always show advanced charts for all personas (including executive)
   const details = document.querySelector('details');
-  if (persona === 'student' || persona === 'lecturer') {
-    details.style.display = 'block';
-  } else {
-    details.style.display = 'none';
-  }
+  if (details) details.style.display = 'block'; // never hide
 
-  window.__refreshAll();
+  setTimeout(() => window.__refreshAll(), 50);
 }
 
 function navigateTo(page) {
   document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
+  const target = document.getElementById('page-' + page);
+  if (target) target.classList.add('active');
   document.querySelectorAll('.navitem').forEach(el => el.classList.remove('active'));
-  document.querySelector(`.navitem[data-page="${page}"]`).classList.add('active');
+  const navItem = document.querySelector(`.navitem[data-page="${page}"]`);
+  if (navItem) navItem.classList.add('active');
   window.__refreshAll();
 }
 
@@ -146,11 +163,13 @@ function attachUIListeners() {
 
   const slider = document.getElementById('fontSlider');
   const label = document.getElementById('fontSizeLabel');
-  slider.addEventListener('input', function () {
-    const val = parseFloat(this.value);
-    label.textContent = Math.round(val * 100) + '%';
-    document.documentElement.style.setProperty('--font-scale', val);
-  });
+  if (slider && label) {
+    slider.addEventListener('input', function () {
+      const val = parseFloat(this.value);
+      label.textContent = Math.round(val * 100) + '%';
+      document.documentElement.style.setProperty('--font-scale', val);
+    });
+  }
 
   d3.selectAll('.navitem').on('click', function () {
     const page = this.dataset.page;
@@ -188,17 +207,21 @@ function attachUIListeners() {
 
   const hoursSlider = document.getElementById('f-hours');
   const rangeLabel = document.getElementById('rangeLbl');
-  hoursSlider.addEventListener('input', function () {
-    rangeLabel.textContent = this.value + 'h+';
-    state.minHours = +this.value;
-  });
-  hoursSlider.addEventListener('change', function () { window.__refreshAll(); });
+  if (hoursSlider && rangeLabel) {
+    hoursSlider.addEventListener('input', function () {
+      rangeLabel.textContent = this.value + 'h+';
+      state.minHours = +this.value;
+    });
+    hoursSlider.addEventListener('change', function () { window.__refreshAll(); });
+  }
 
   const searchInput = document.getElementById('f-search');
-  searchInput.addEventListener('input', function () {
-    state.search = this.value.trim();
-    window.__refreshAll();
-  });
+  if (searchInput) {
+    searchInput.addEventListener('input', function () {
+      state.search = this.value.trim();
+      window.__refreshAll();
+    });
+  }
 
   d3.select('#drillBack').on('click', () => {
     state.drillYear = null;
@@ -266,7 +289,6 @@ function loadData() {
     .catch(err => {
       console.error(err);
       document.getElementById('recordCount').textContent = '❌ Dataset not found.';
-      // fallback
       d3.csv('ai_student_impact.csv')
         .then(raw => {
           if (!raw || raw.length === 0) throw new Error('Empty file');

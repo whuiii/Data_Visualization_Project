@@ -14,7 +14,7 @@
 
     <div class="shell">
 
-        <!-- ===== SIDEBAR ===== -->
+        <!-- SIDEBAR -->
         <aside class="sidebar" id="sidebar">
             <div class="brand">
                 <svg class="brand-mark" viewBox="0 0 40 40">
@@ -46,10 +46,10 @@
             </div>
         </aside>
 
-        <!-- ===== MAIN ===== -->
+        <!-- MAIN -->
         <div class="main">
 
-            <!-- ===== HERO ===== -->
+            <!-- HERO -->
             <header class="hero" id="hero">
                 <div class="hero-inner">
                     <div class="hero-top">
@@ -102,7 +102,7 @@
                 </div>
             </header>
 
-            <!-- ===== FILTER BAR ===== -->
+            <!-- FILTER BAR -->
             <div class="filter-section" id="filterSection">
                 <span class="filter-header">Filters</span>
                 <div class="filter-inner">
@@ -144,19 +144,18 @@
                 </div>
             </div>
 
-            <!-- ===== PAGES ===== -->
+            <!-- PAGES -->
             <div class="content">
 
-                <!-- ===== PAGE: CHARTS ===== -->
+                <!-- PAGE: CHARTS -->
                 <section id="page-charts" class="page active">
                     <div class="section-heading"><span class="num">📊</span> Charts</div>
 
                     <!-- KPI Row -->
                     <div class="kpi-row" id="kpiRow"></div>
 
-                    <!-- ===== STUDENT VIEW (default) ===== -->
+                    <!-- STUDENT VIEW -->
                     <div id="studentView">
-                        <!-- Row 1: Donut (FIG.1) + Personal GPA vs AI Usage (FIG.2) -->
                         <div class="grid2">
                             <div class="card">
                                 <div class="card-head">
@@ -183,7 +182,6 @@
                             </div>
                         </div>
 
-                        <!-- Row 2: Scatter (FIG.3) + Radar (FIG.4) -->
                         <div class="grid2">
                             <div class="card">
                                 <div class="card-head">
@@ -212,7 +210,6 @@
                             </div>
                         </div>
 
-                        <!-- Row 3: Paid Plan vs Free Plan (FIG.5) full width -->
                         <div class="card">
                             <div class="card-head">
                                 <div>
@@ -224,73 +221,10 @@
                             </div>
                             <div id="chartPaidPie"></div>
                         </div>
-
-                        <!-- Advanced charts (collapsible) -->
-                        <details style="margin-top:24px; cursor:pointer; color:var(--text-muted);">
-                            <summary style="font-weight:600; font-size:14px; padding:8px 0;">🔍 Advanced charts (drilldown, heatmap, parallel, trend) — click to expand</summary>
-                            <div style="margin-top:12px;">
-                                <!-- Drilldown (FIG.6) -->
-                                <div class="card">
-                                    <div class="card-head">
-                                        <div>
-                                            <div class="fig">FIG. 6</div>
-                                            <h3>Cohort by year of study</h3>
-                                            <p>Click a bar to drill into that year's majors.</p>
-                                        </div>
-                                        <span class="card-tag feat">Drill‑down</span>
-                                    </div>
-                                    <div class="backbtn interactive" id="drillBack">← Back to all years</div>
-                                    <div id="chartDrilldown"></div>
-                                </div>
-
-                                <!-- Heatmap (FIG.7) -->
-                                <div class="card advanced-chart">
-                                    <div class="card-head">
-                                        <div>
-                                            <div class="fig">FIG. 7</div>
-                                            <h3>Heat map — Major × Primary use case</h3>
-                                            <p>GPA change by colour. Click a cell to filter.</p>
-                                        </div>
-                                        <span class="card-tag feat">Hover + click filter</span>
-                                    </div>
-                                    <div id="chartHeatmap"></div>
-                                    <div class="legend" id="heatLegend"></div>
-                                </div>
-
-                                <!-- Parallel (FIG.8) -->
-                                <div class="card advanced-chart">
-                                    <div class="card-head">
-                                        <div>
-                                            <div class="fig">FIG. 8</div>
-                                            <h3>Parallel coordinates — multivariate profiles</h3>
-                                            <p>Drag any axis to brush and cross‑filter.</p>
-                                        </div>
-                                        <span class="card-tag feat">Brush any axis</span>
-                                    </div>
-                                    <div id="chartParallel"></div>
-                                    <div class="legend" id="parallelLegend"></div>
-                                </div>
-
-                                <!-- Trend (FIG.9) -->
-                                <div class="card">
-                                    <div class="card-head">
-                                        <div>
-                                            <div class="fig">FIG. 9</div>
-                                            <h3>Monthly trajectory, Feb → Jun</h3>
-                                            <p>Average GPA improvement (green) against average exam‑anxiety (blue).</p>
-                                        </div>
-                                        <span class="card-tag feat">Dual‑axis</span>
-                                    </div>
-                                    <div id="chartTrend"></div>
-                                    <div class="legend" id="trendLegend"></div>
-                                </div>
-                            </div>
-                        </details>
                     </div>
 
-                    <!-- ===== LECTURER VIEW ===== -->
+                    <!-- LECTURER VIEW -->
                     <div id="lecturerView" style="display:none;">
-                        <!-- Row 1: Heatmap (full width) -->
                         <div class="card">
                             <div class="card-head">
                                 <div>
@@ -304,7 +238,6 @@
                             <div class="legend" id="heatLegendLecturer"></div>
                         </div>
 
-                        <!-- Row 2: Scatter Plot Matrix + Histogram -->
                         <div class="grid2">
                             <div class="card">
                                 <div class="card-head">
@@ -330,7 +263,6 @@
                             </div>
                         </div>
 
-                        <!-- Row 3: Box Plot (GPA by usage level) -->
                         <div class="card">
                             <div class="card-head">
                                 <div>
@@ -344,9 +276,71 @@
                         </div>
                     </div>
 
+                    <!-- SHARED ADVANCED CHARTS (visible to all personas) -->
+                    <details style="margin-top:24px; cursor:pointer; color:var(--text-muted);">
+                        <summary style="font-weight:600; font-size:14px; padding:8px 0;">🔍 Advanced charts (drilldown, heatmap, parallel, trend) — click to expand</summary>
+                        <div style="margin-top:12px;">
+                            <!-- Drilldown -->
+                            <div class="card">
+                                <div class="card-head">
+                                    <div>
+                                        <div class="fig">FIG. 6</div>
+                                        <h3>Cohort by year of study</h3>
+                                        <p>Click a bar to drill into that year's majors.</p>
+                                    </div>
+                                    <span class="card-tag feat">Drill‑down</span>
+                                </div>
+                                <div class="backbtn interactive" id="drillBack">← Back to all years</div>
+                                <div id="chartDrilldown"></div>
+                            </div>
+
+                            <!-- Heatmap (shared) -->
+                            <div class="card advanced-chart">
+                                <div class="card-head">
+                                    <div>
+                                        <div class="fig">FIG. 7</div>
+                                        <h3>Heat map — Major × Primary use case</h3>
+                                        <p>GPA change by colour. Click a cell to filter.</p>
+                                    </div>
+                                    <span class="card-tag feat">Hover + click filter</span>
+                                </div>
+                                <div id="chartHeatmap"></div>
+                                <div class="legend" id="heatLegend"></div>
+                            </div>
+
+                            <!-- Parallel -->
+                            <div class="card advanced-chart">
+                                <div class="card-head">
+                                    <div>
+                                        <div class="fig">FIG. 8</div>
+                                        <h3>Parallel coordinates — multivariate profiles</h3>
+                                        <p>Drag any axis to brush and cross‑filter.</p>
+                                    </div>
+                                    <span class="card-tag feat">Brush any axis</span>
+                                </div>
+                                <div id="chartParallel"></div>
+                                <div class="legend" id="parallelLegend"></div>
+                            </div>
+
+                            <!-- Trend -->
+                            <div class="card">
+                                <div class="card-head">
+                                    <div>
+                                        <div class="fig">FIG. 9</div>
+                                        <h3>Monthly trajectory, Feb → Jun</h3>
+                                        <p>Average GPA improvement (green) against average exam‑anxiety (blue).</p>
+                                    </div>
+                                    <span class="card-tag feat">Dual‑axis</span>
+                                </div>
+                                <div id="chartTrend"></div>
+                                <div class="legend" id="trendLegend"></div>
+                            </div>
+                        </div>
+                    </details>
+
                 </section>
 
-                <!-- ===== PAGE: TIMELINE ===== -->
+                <!-- PAGE: TIMELINE -->
                 <section id="page-timeline" class="page">
                     <div class="section-heading"><span class="num">📅</span> Project Timeline</div>
                     <div class="card">
@@ -368,7 +362,7 @@
                     </div>
                 </section>
 
-                <!-- ===== PAGE: INSIGHTS ===== -->
+                <!-- PAGE: INSIGHTS -->
                 <section id="page-insights" class="page">
                     <div class="section-heading"><span class="num">💡</span> Insights &amp; Recommendations</div>
                     <div id="insightsWrap"></div>
@@ -378,10 +372,9 @@
         </div><!-- /main -->
     </div><!-- /shell -->
 
-    <!-- ===== TOOLTIP ===== -->
+    <!-- TOOLTIP -->
     <div class="tooltip" id="tooltip"></div>
 
-    <!-- ===== MODULAR JAVASCRIPT ENTRY ===== -->
     <script type="module" src="js/script.js"></script>
 </body>
 </html>
