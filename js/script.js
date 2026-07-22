@@ -16,7 +16,7 @@ import { renderPaidPie } from './charts/paidPie.js';
 // Lecturer charts
 import { renderScatterMatrix } from './charts/scatterMatrix.js';
 import { renderHistogram } from './charts/histogram.js';
-import { renderBoxPlot } from './charts/boxplot.js';
+import { renderBoxPlot } from './charts/boxPlot.js';
 
 function debounce(fn, delay = 150) {
   let timer;
