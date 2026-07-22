@@ -26,15 +26,54 @@ export function renderHeatmap(selector, data) {
   const maxAbs = Math.max(Math.abs(d3.min(validAvgs) || 0.05), Math.abs(d3.max(validAvgs) || 0.05));
   const color = d3.scaleLinear().domain([-maxAbs, 0, maxAbs]).range([C.red, C.surface3, C.mint]);
 
-  svg.append('g').attr('class', 'axis').attr('transform', `translate(0,${H - M.b})`).call(d3.axisBottom(x).tickSizeOuter(0))
-    .selectAll('text').attr('transform', 'rotate(-28)').style('text-anchor', 'end').text(d => d.replace(/_/g, ' '));
-  svg.append('g').attr('class', 'axis').attr('transform', `translate(${M.l},0)`).call(d3.axisLeft(y).tickSizeOuter(0));
+  // X axis with wrapped labels
+  const xAxisG = svg.append('g')
+    .attr('class', 'axis')
+    .attr('transform', `translate(0,${H - M.b})`)
+    .call(d3.axisBottom(x).tickSizeOuter(0));
 
-  svg.selectAll('rect').data(grid).enter().append('rect')
-    .attr('x', d => x(d.uc)).attr('y', d => y(d.maj)).attr('width', x.bandwidth()).attr('height', y.bandwidth()).attr('rx', 3)
+  // Wrap tick labels into multiple lines
+  xAxisG.selectAll('.tick text')
+    .each(function(d) {
+      const text = d3.select(this);
+      const words = d.replace(/_/g, ' ').split(' ');
+      text.text(null); // clear existing text
+      // Set text-anchor to middle (default for band scale)
+      text.style('text-anchor', 'middle');
+      // Append each word as a separate tspan
+      words.forEach((word, i) => {
+        text.append('tspan')
+          .attr('x', 0)
+          .attr('dy', i === 0 ? '1.1em' : '1.2em') // first line offset
+          .text(word);
+      });
+    })
+    .style('font-size', '10px')
+    .style('font-family', 'Roboto Mono, monospace');
+
+  // Y axis
+  svg.append('g')
+    .attr('class', 'axis')
+    .attr('transform', `translate(${M.l},0)`)
+    .call(d3.axisLeft(y).tickSizeOuter(0));
+
+  // Heatmap cells
+  svg.selectAll('rect')
+    .data(grid)
+    .enter().append('rect')
+    .attr('x', d => x(d.uc))
+    .attr('y', d => y(d.maj))
+    .attr('width', x.bandwidth())
+    .attr('height', y.bandwidth())
+    .attr('rx', 3)
     .attr('fill', d => d.avg === null ? C.surface3 : color(d.avg))
-    .attr('stroke', C.surface).attr('stroke-width', 1.5).style('cursor', 'pointer')
-    .on('mousemove', (evt, d) => showTip(`<b>${d.maj}</b> × ${d.uc.replace(/_/g, ' ')}<div class="t-row"><span>n</span><span>${d.n}</span></div><div class="t-row"><span>Avg GPA change</span><span>${d.avg !== null ? d3.format('+.2f')(d.avg) : '—'}</span></div>`, evt))
+    .attr('stroke', C.surface)
+    .attr('stroke-width', 1.5)
+    .style('cursor', 'pointer')
+    .on('mousemove', (evt, d) => showTip(
+      `<b>${d.maj}</b> × ${d.uc.replace(/_/g, ' ')}<div class="t-row"><span>n</span><span>${d.n}</span></div><div class="t-row"><span>Avg GPA change</span><span>${d.avg !== null ? d3.format('+.2f')(d.avg) : '—'}</span></div>`,
+      evt
+    ))
     .on('mouseleave', hideTip)
     .on('click', (evt, d) => {
       if (d.n === 0) return;
@@ -42,7 +81,7 @@ export function renderHeatmap(selector, data) {
       if (window.__refreshAll) window.__refreshAll();
     });
 
-  // Legend: choose correct legend container based on selector
+  // Legend
   const legendId = selector === '#chartHeatmap' ? '#heatLegend' : '#heatLegendLecturer';
   const legend = d3.select(legendId);
   legend.selectAll('*').remove();

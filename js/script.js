@@ -16,7 +16,13 @@ import { renderPaidPie } from './charts/paidPie.js';
 // Lecturer charts
 import { renderScatterMatrix } from './charts/scatterMatrix.js';
 import { renderHistogram } from './charts/histogram.js';
-import { renderBoxPlot } from './charts/boxPlot.js';
+import { renderUsageLine } from './charts/usageLine.js';
+import { renderStackedBar } from './charts/stackedBar.js';
+
+// Executive charts
+import { renderExecutiveTrend } from './charts/executiveTrend.js';
+import { renderExecutiveBar } from './charts/executiveBar.js';
+import { renderExecutiveTreemap } from './charts/executiveTree.js';
 
 function debounce(fn, delay = 150) {
   let timer;
@@ -33,7 +39,7 @@ function clearCharts() {
     '#chartDonut', '#chartScatter', '#chartRadar', '#chartDrilldown',
     '#chartHeatmap', '#chartParallel', '#chartTrend', '#chartPaidPie',
     '#chartUsageBarDual', '#chartHeatmapLecturer', '#chartScatterMatrix',
-    '#chartHistogram', '#chartBoxPlot'
+    '#chartHistogram', '#chartUsageLine', '#chartStackedBar' ,'#chartExecutiveTrend', '#chartExecutiveBar', '#chartExecutiveTreemap' 
   ];
   selectors.forEach(sel => d3.select(sel).selectAll('*').remove());
 }
@@ -65,29 +71,38 @@ const refreshAll = function () {
   const persona = state.persona;
   const studentView = document.getElementById('studentView');
   const lecturerView = document.getElementById('lecturerView');
+  const executiveView = document.getElementById('executiveView');
 
-  if (persona === 'student' || persona === 'executive') {
+  // Hide all
+  if (studentView) studentView.style.display = 'none';
+  if (lecturerView) lecturerView.style.display = 'none';
+  if (executiveView) executiveView.style.display = 'none';
+
+  // Show the appropriate one
+  if (persona === 'student') {
     if (studentView) studentView.style.display = 'block';
-    if (lecturerView) lecturerView.style.display = 'none';
   } else if (persona === 'lecturer') {
-    if (studentView) studentView.style.display = 'none';
     if (lecturerView) lecturerView.style.display = 'block';
+  } else if (persona === 'executive') {
+    if (executiveView) executiveView.style.display = 'block';
   }
 
   requestAnimationFrame(() => {
-    if (persona === 'student' || persona === 'executive') {
-      // Student-specific (also used for executive)
+    if (persona === 'student') {
       renderDonut(fullData);
       renderUsageBarDual(fullData);
       renderRadar(fullData);
       renderScatter(fullData, sampledData);
       renderPaidPie(fullData);
     } else if (persona === 'lecturer') {
-      // Lecturer-specific
-      renderHeatmap('#chartHeatmapLecturer', fullData);
       renderScatterMatrix(fullData, sampledData);
+      renderStackedBar(fullData);
       renderHistogram(fullData);
-      renderBoxPlot(fullData);
+      renderUsageLine(fullData);
+    } else if (persona === 'executive') {
+      renderExecutiveTrend(fullData);
+      renderExecutiveBar(fullData);
+      renderExecutiveTreemap(fullData);
     }
     renderPending = false;
   });
@@ -128,7 +143,7 @@ function applyPersona(persona) {
 
   // Always show advanced charts for all personas (including executive)
   const details = document.querySelector('details');
-  if (details) details.style.display = 'block'; // never hide
+  if (details) details.style.display = 'block';
 
   setTimeout(() => window.__refreshAll(), 50);
 }

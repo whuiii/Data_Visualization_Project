@@ -7,7 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+
   <script type="module" crossorigin src="/assets/index-Dd66PrWv.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-BN7k4EQn.css">
 </head>
@@ -277,6 +278,34 @@
                         </div>
                     </div>
 
+                    <!-- EXECUTIVE VIEW -->
+                    <div id="executiveView" style="display:none;">
+                        <div class="grid2">
+                            <div class="card">
+                                <div class="card-head">
+                                    <div>
+                                        <div class="fig">FIG. E1</div>
+                                        <h3>AI Adoption Trend</h3>
+                                        <p>Average weekly AI usage hours across the semester – shows adoption growth.</p>
+                                    </div>
+                                    <span class="card-tag feat">Trend</span>
+                                </div>
+                                <div id="chartExecutiveTrend"></div>
+                            </div>
+                            <div class="card">
+                                <div class="card-head">
+                                    <div>
+                                        <div class="fig">FIG. E2</div>
+                                        <h3>Faculty / Programme Comparison</h3>
+                                        <p>Average AI usage hours by major – click a bar to filter.</p>
+                                    </div>
+                                    <span class="card-tag feat">Click to filter</span>
+                                </div>
+                                <div id="chartExecutiveBar"></div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- SHARED ADVANCED CHARTS (visible to all personas) -->
                     <details style="margin-top:24px; cursor:pointer; color:var(--text-muted);">
                         <summary style="font-weight:600; font-size:14px; padding:8px 0;">🔍 Advanced charts (drilldown, heatmap, parallel, trend) — click to expand</summary>
@@ -375,6 +404,7 @@
 
     <!-- TOOLTIP -->
     <div class="tooltip" id="tooltip"></div>
-
+
+
 </body>
 </html>

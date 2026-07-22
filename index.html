@@ -156,7 +156,8 @@
 
                     <!-- STUDENT VIEW -->
                     <div id="studentView">
-                        <div class="grid2">
+                        <!-- Row 1: Donut + Dual Bar -->
+                        <div class="grid-half">
                             <div class="card">
                                 <div class="card-head">
                                     <div>
@@ -182,78 +183,69 @@
                             </div>
                         </div>
 
-                        <div class="grid2">
+                        <!-- Row 2: Radar + Paid Pie -->
+                        <div class="grid-half">
                             <div class="card">
                                 <div class="card-head">
                                     <div>
                                         <div class="fig">FIG. 3</div>
-                                        <h3>AI Hours vs. Post‑Semester GPA</h3>
-                                        <p>Brush to select; search an ID to spotlight.</p>
+                                        <h3>Personal Learning Profile</h3>
+                                        <p>Radar chart showing the average student profile across key dimensions.</p>
                                     </div>
-                                    <span class="card-tag feat">Brush + search</span>
+                                    <span class="card-tag feat">Hover for details</span>
                                 </div>
-                                <div id="chartScatter"></div>
-                                <div class="legend" id="scatterLegend"></div>
-                                <div class="searchHit" id="searchHit"></div>
+                                <div id="chartRadar"></div>
+                                <div class="radar-legend" id="radarLegend"></div>
                             </div>
                             <div class="card">
                                 <div class="card-head">
                                     <div>
                                         <div class="fig">FIG. 4</div>
-                                        <h3>Personal Learning Profile</h3>
-                                        <p>Radar chart showing the average student profile across key dimensions.</p>
+                                        <h3>Paid Plan vs Free Plan</h3>
+                                        <p>Percentage of students using paid subscriptions vs free plans. Click a slice to filter.</p>
                                     </div>
-                                    <span class="card-tag feat">Student view</span>
+                                    <span class="card-tag feat">Click to filter</span>
                                 </div>
-                                <div id="chartRadar"></div>
-                                <div class="radar-legend" id="radarLegend"></div>
+                                <div id="chartPaidPie"></div>
                             </div>
                         </div>
 
+                        <!-- Row 3: Scatter (full width) -->
                         <div class="card">
                             <div class="card-head">
                                 <div>
                                     <div class="fig">FIG. 5</div>
-                                    <h3>Paid Plan vs Free Plan</h3>
-                                    <p>Percentage of students using paid subscriptions vs free plans. Click a slice to filter.</p>
+                                    <h3>AI Hours vs. Post‑Semester GPA</h3>
+                                    <p>Brush to select; search an ID to spotlight. (Shows a representative sample of up to 5,000 records for performance.)</p>
                                 </div>
-                                <span class="card-tag feat">Click to filter</span>
+                                <span class="card-tag feat">Brush + search</span>
                             </div>
-                            <div id="chartPaidPie"></div>
+                            <div id="chartScatter"></div>
+                            <div class="legend" id="scatterLegend"></div>
+                            <div class="searchHit" id="searchHit"></div>
                         </div>
                     </div>
 
                     <!-- LECTURER VIEW -->
                     <div id="lecturerView" style="display:none;">
-                        <div class="card">
-                            <div class="card-head">
-                                <div>
-                                    <div class="fig">FIG. L1</div>
-                                    <h3>Heat map — Major × Primary use case</h3>
-                                    <p>GPA change by colour. Click a cell to filter.</p>
+                        <!-- Row 1: Stacked Bar + Histogram -->
+                        <div class="grid-half">
+                            <div class="card">
+                                <div class="card-head">
+                                    <div>
+                                        <div class="fig">FIG. L1</div>
+                                        <h3>AI Usage Level Across Student Groups</h3>
+                                        <p>Distribution of AI usage levels (Low, Moderate, High, Very High) across different years of study.</p>
+                                    </div>
+                                    <span class="card-tag feat">Hover For details</span>
                                 </div>
-                                <span class="card-tag feat">Hover + click filter</span>
+                                <div id="chartStackedBar"></div>
+                                <div class="legend" id="stackedBarLegend"></div>
                             </div>
-                            <div id="chartHeatmapLecturer"></div>
-                            <div class="legend" id="heatLegendLecturer"></div>
-                        </div>
-
-                        <div class="grid2">
                             <div class="card">
                                 <div class="card-head">
                                     <div>
                                         <div class="fig">FIG. L2</div>
-                                        <h3>Scatter Plot Matrix</h3>
-                                        <p>Compare multiple variables at once. Hover points for details.</p>
-                                    </div>
-                                    <span class="card-tag feat">Interactive</span>
-                                </div>
-                                <div id="chartScatterMatrix"></div>
-                            </div>
-                            <div class="card">
-                                <div class="card-head">
-                                    <div>
-                                        <div class="fig">FIG. L3</div>
                                         <h3>GPA Distribution</h3>
                                         <p>Histogram of Post‑Semester GPA.</p>
                                     </div>
@@ -263,18 +255,75 @@
                             </div>
                         </div>
 
+                        <!-- Row 2: Monthly Trends (full width) -->
+                        <div class="card">
+                            <div class="card-head">
+                                <div>
+                                    <div class="fig">FIG. L3</div>
+                                    <h3>Monthly GPA & AI Usage Trends</h3>
+                                    <p>Track how average GPA improvement and AI usage hours evolve month by month – useful for identifying seasonal patterns and policy timing.</p>
+                                </div>
+                                <span class="card-tag feat">Dual‑axis</span>
+                            </div>
+                            <div id="chartUsageLine"></div>
+                            <div class="legend" id="usageLineLegend"></div>
+                        </div>
+
+                        <!-- Row 3: Scatter Matrix (full width) -->
                         <div class="card">
                             <div class="card-head">
                                 <div>
                                     <div class="fig">FIG. L4</div>
-                                    <h3>Box Plot — GPA Improvement by AI Usage Level</h3>
-                                    <p>Compare distributions across usage groups.</p>
+                                    <h3>Scatter Plot Matrix</h3>
+                                    <p>Compare multiple variables at once. Hover points for details. (Sample of up to 5,000 records.)</p>
                                 </div>
-                                <span class="card-tag feat">Box plot</span>
+                                <span class="card-tag feat">Interactive</span>
                             </div>
-                            <div id="chartBoxPlot"></div>
+                            <div id="chartScatterMatrix"></div>
                         </div>
                     </div>
+
+                    <!-- EXECUTIVE VIEW -->
+                    <div id="executiveView" style="display:none;">
+                        <div class="grid-half">
+                            <div class="card">
+                                <div class="card-head">
+                                    <div>
+                                        <div class="fig">FIG. E1</div>
+                                        <h3>AI Adoption Trend</h3>
+                                        <p>Average weekly AI usage hours across the semester – shows adoption growth.</p>
+                                    </div>
+                                    <span class="card-tag feat">Trend</span>
+                                </div>
+                                <div id="chartExecutiveTrend"></div>
+                            </div>
+                            <div class="card">
+                                <div class="card-head">
+                                    <div>
+                                        <div class="fig">FIG. E2</div>
+                                        <h3>Faculty / Programme Comparison</h3>
+                                        <p>Average AI usage hours by major – click a bar to filter.</p>
+                                    </div>
+                                    <span class="card-tag feat">Click to filter</span>
+                                </div>
+                                <div id="chartExecutiveBar"></div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-head">
+                                <div>
+                                    <div class="fig">FIG. E4</div>
+                                    <h3>Distribution of AI Usage Across Student Groups</h3>
+                                    <p>Treemap showing student count (area) and average AI usage hours (colour) per major – quickly identify which programmes have highest AI adoption.</p>
+                                </div>
+                                <span class="card-tag feat">Hover for details</span>
+                            </div>
+                            <div id="chartExecutiveTreemap"></div>
+                            <div class="legend" id="treemapLegend"></div>
+                        </div>
+                    </div>
+
+                    
 
                     <!-- SHARED ADVANCED CHARTS (visible to all personas) -->
                     <details style="margin-top:24px; cursor:pointer; color:var(--text-muted);">
@@ -314,7 +363,7 @@
                                     <div>
                                         <div class="fig">FIG. 8</div>
                                         <h3>Parallel coordinates — multivariate profiles</h3>
-                                        <p>Drag any axis to brush and cross‑filter.</p>
+                                        <p>Drag any axis to brush and cross‑filter. (Shows a representative sample of up to 5,000 records.)</p>
                                     </div>
                                     <span class="card-tag feat">Brush any axis</span>
                                 </div>
@@ -375,6 +424,6 @@
     <!-- TOOLTIP -->
     <div class="tooltip" id="tooltip"></div>
 
-    <script type="module" src="/js/script.js"></script>
+    <script type="module" src="js/script.js"></script>
 </body>
 </html>

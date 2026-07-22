@@ -48,12 +48,15 @@ export function renderRadar(data) {
     const lx = centerX + (radius + 22) * Math.cos(a);
     const ly = centerY + (radius + 22) * Math.sin(a);
     gridG.append('text').attr('x', lx).attr('y', ly).attr('text-anchor', 'middle').attr('dominant-baseline', 'middle')
-      .attr('fill', 'var(--text-faint)').style('font-size', '9px').style('font-family', 'Roboto Mono')
+      .attr('fill', 'var(--text)')
+      .style('font-size', '12px')
+      .style('font-weight', '600')
+      .style('font-family', 'Inter, sans-serif') 
       .text(dims[i].label);
   });
 
   svg.append('polygon').attr('points', points.map(p => p.join(',')).join(' '))
-    .attr('fill', 'var(--accent)').attr('fill-opacity', 0.2)
+    .attr('fill', 'var(--accent)').attr('fill-opacity', 0.3)
     .attr('stroke', 'var(--accent)').attr('stroke-width', 2);
   svg.selectAll('.radar-dot').data(points).enter().append('circle')
     .attr('cx', d => d[0]).attr('cy', d => d[1]).attr('r', 4)
@@ -61,9 +64,9 @@ export function renderRadar(data) {
 
   const leg = d3.select('#radarLegend');
   leg.selectAll('*').remove();
-  leg.append('span').html(`<span class="dot" style="background:var(--accent);opacity:0.3;"></span> Average student profile`);
-  leg.append('span').style('color', 'var(--text-faint)').style('font-size', '10px')
-    .text('(higher = better, except AI hrs & anxiety)');
+  leg.append('span').html(`<span class="dot" style="background:var(--accent);opacity:0.6;"></span> Average student profile`);
+  leg.append('span').style('color', 'var(--text-faint)').style('font-size', '14px').style('font-weight', '500')
+    .text(' (higher = better, except AI hrs & anxiety)');
 
   svg.append('polygon').attr('points', points.map(p => p.join(',')).join(' '))
     .attr('fill', 'transparent').attr('stroke', 'none')
