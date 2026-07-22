@@ -1,8 +1,9 @@
 // js/charts/histogram.js
-import { themeColors, showTip, hideTip } from '../utils/helpers.js';
+import { themeColors, showTip, hideTip, getFontScale } from '../utils/helpers.js';
 
 export function renderHistogram(data) {
   const C = themeColors();
+  const fontScale = getFontScale();
   const el = d3.select('#chartHistogram');
   el.selectAll('*').remove();
 
@@ -19,9 +20,7 @@ export function renderHistogram(data) {
   const aspectRatio = 0.7;
   const W = Math.min(containerWidth, 800);
   const H = W * aspectRatio;
-
-  // Increased left margin to accommodate y-axis labels
-  const M = { t: 20, r: 20, b: 44, l: 70 };
+  const M = { t: 20 * fontScale, r: 20 * fontScale, b: 44 * fontScale, l: 70 * fontScale };
 
   const svg = el.append('svg')
     .attr('width', '100%')
@@ -37,26 +36,23 @@ export function renderHistogram(data) {
     .nice()
     .range([H - M.b, M.t]);
 
-  // Axes with increased left margin and better formatting
   svg.append('g')
     .attr('class', 'axis')
     .attr('transform', `translate(0,${H - M.b})`)
     .call(d3.axisBottom(x).ticks(8))
     .style('font-family', 'Roboto Mono, monospace')
-    .style('font-size', '10px');
+    .style('font-size', (10 * fontScale) + 'px');
 
   svg.append('g')
     .attr('class', 'axis')
     .attr('transform', `translate(${M.l},0)`)
     .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('.0f')))
     .style('font-family', 'Roboto Mono, monospace')
-    .style('font-size', '10px');
+    .style('font-size', (10 * fontScale) + 'px');
 
-  // Bars
   svg.selectAll('rect')
     .data(bins)
-    .enter()
-    .append('rect')
+    .enter().append('rect')
     .attr('x', d => x(d.x0))
     .attr('y', d => y(d.length))
     .attr('width', d => Math.max(1, x(d.x1) - x(d.x0) - 1))

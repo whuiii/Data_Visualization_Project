@@ -1,19 +1,33 @@
 // js/charts/heatmap.js
-import { themeColors, showTip, hideTip } from '../utils/helpers.js';
+import { themeColors, showTip, hideTip, getFontScale } from '../utils/helpers.js';
 import { state, getRawData } from '../state.js';
 
 export function renderHeatmap(selector, data) {
   const C = themeColors();
+  const fontScale = getFontScale();
   const RAW_DATA = getRawData();
   const el = d3.select(selector);
   el.selectAll('*').remove();
-  const useCases = Array.from(new Set(RAW_DATA.map(d => d.Primary_Use_Case)));
-  const W = el.node().clientWidth || 900, H = 300, M = { t: 16, r: 16, b: 80, l: 100 };
-  const svg = el.append('svg').attr('width', '100%').attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
 
-  const x = d3.scaleBand().domain(useCases).range([M.l, W - M.r]).padding(0.06);
+  const useCases = Array.from(new Set(RAW_DATA.map(d => d.Primary_Use_Case)));
+  const W = el.node().clientWidth || 900;
+  const H = 300;
+  const M = { t: 16 * fontScale, r: 16 * fontScale, b: 80 * fontScale, l: 100 * fontScale };
+  const svg = el.append('svg')
+    .attr('width', '100%')
+    .attr('height', H)
+    .attr('viewBox', `0 0 ${W} ${H}`)
+    .style('display', 'block');
+
+  const x = d3.scaleBand()
+    .domain(useCases)
+    .range([M.l, W - M.r])
+    .padding(0.06);
   const majors = Array.from(new Set(RAW_DATA.map(d => d.Major_Category))).sort();
-  const y = d3.scaleBand().domain(majors).range([M.t, H - M.b]).padding(0.06);
+  const y = d3.scaleBand()
+    .domain(majors)
+    .range([M.t, H - M.b])
+    .padding(0.06);
 
   const grid = [];
   majors.forEach(maj => {
@@ -24,40 +38,37 @@ export function renderHeatmap(selector, data) {
   });
   const validAvgs = grid.filter(d => d.avg !== null).map(d => d.avg);
   const maxAbs = Math.max(Math.abs(d3.min(validAvgs) || 0.05), Math.abs(d3.max(validAvgs) || 0.05));
-  const color = d3.scaleLinear().domain([-maxAbs, 0, maxAbs]).range([C.red, C.surface3, C.mint]);
+  const color = d3.scaleLinear()
+    .domain([-maxAbs, 0, maxAbs])
+    .range([C.red, C.surface3, C.mint]);
 
-  // X axis with wrapped labels
   const xAxisG = svg.append('g')
     .attr('class', 'axis')
     .attr('transform', `translate(0,${H - M.b})`)
     .call(d3.axisBottom(x).tickSizeOuter(0));
 
-  // Wrap tick labels into multiple lines
   xAxisG.selectAll('.tick text')
     .each(function(d) {
       const text = d3.select(this);
       const words = d.replace(/_/g, ' ').split(' ');
-      text.text(null); // clear existing text
-      // Set text-anchor to middle (default for band scale)
+      text.text(null);
       text.style('text-anchor', 'middle');
-      // Append each word as a separate tspan
       words.forEach((word, i) => {
         text.append('tspan')
           .attr('x', 0)
-          .attr('dy', i === 0 ? '1.1em' : '1.2em') // first line offset
+          .attr('dy', i === 0 ? '1.1em' : '1.2em')
           .text(word);
       });
     })
-    .style('font-size', '10px')
+    .style('font-size', (10 * fontScale) + 'px')
     .style('font-family', 'Roboto Mono, monospace');
 
-  // Y axis
   svg.append('g')
     .attr('class', 'axis')
     .attr('transform', `translate(${M.l},0)`)
-    .call(d3.axisLeft(y).tickSizeOuter(0));
+    .call(d3.axisLeft(y).tickSizeOuter(0))
+    .style('font-size', (10 * fontScale) + 'px');
 
-  // Heatmap cells
   svg.selectAll('rect')
     .data(grid)
     .enter().append('rect')
@@ -81,12 +92,19 @@ export function renderHeatmap(selector, data) {
       if (window.__refreshAll) window.__refreshAll();
     });
 
-  // Legend
   const legendId = selector === '#chartHeatmap' ? '#heatLegend' : '#heatLegendLecturer';
   const legend = d3.select(legendId);
   legend.selectAll('*').remove();
-  legend.append('span').html(`<i style="background:${C.red}"></i> GPA decline`);
-  legend.append('span').html(`<i style="background:${C.surface3};border:1px solid var(--border)"></i> ~no change`);
-  legend.append('span').html(`<i style="background:${C.mint}"></i> GPA improvement`);
-  legend.append('span').text('Click a cell to filter that major');
+  legend.append('span')
+    .html(`<i style="background:${C.red}"></i> GPA decline`)
+    .style('font-size', (11 * fontScale) + 'px');
+  legend.append('span')
+    .html(`<i style="background:${C.surface3};border:1px solid var(--border)"></i> ~no change`)
+    .style('font-size', (11 * fontScale) + 'px');
+  legend.append('span')
+    .html(`<i style="background:${C.mint}"></i> GPA improvement`)
+    .style('font-size', (11 * fontScale) + 'px');
+  legend.append('span')
+    .text('Click a cell to filter that major')
+    .style('font-size', (11 * fontScale) + 'px');
 }

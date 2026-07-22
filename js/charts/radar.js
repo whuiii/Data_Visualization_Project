@@ -1,13 +1,23 @@
-import { themeColors, showTip, hideTip } from '../utils/helpers.js';
+// js/charts/radar.js
+import { themeColors, showTip, hideTip, getFontScale } from '../utils/helpers.js';
 
 export function renderRadar(data) {
   const C = themeColors();
+  const fontScale = getFontScale();
   const el = d3.select('#chartRadar');
   el.selectAll('*').remove();
-  const W = el.node().clientWidth || 560, H = 300, M = { t: 30, r: 30, b: 30, l: 30 };
-  const svg = el.append('svg').attr('width', '100%').attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
+
+  const W = el.node().clientWidth || 560;
+  const H = 300;
+  const M = { t: 30 * fontScale, r: 30 * fontScale, b: 30 * fontScale, l: 30 * fontScale };
+  const svg = el.append('svg')
+    .attr('width', '100%')
+    .attr('height', H)
+    .attr('viewBox', `0 0 ${W} ${H}`)
+    .style('display', 'block');
+
   const centerX = W / 2, centerY = H / 2;
-  const radius = Math.min(W, H) / 2 - 40;
+  const radius = Math.min(W, H) / 2 - 40 * fontScale;
 
   const dims = [
     { key: 'Weekly_GenAI_Hours', label: 'AI hrs/wk', max: 30 },
@@ -22,10 +32,7 @@ export function renderRadar(data) {
   const angleStep = (2 * Math.PI) / n;
   const angles = dims.map((_, i) => -Math.PI / 2 + i * angleStep);
 
-  const avgVals = dims.map(d => {
-    const vals = data.map(r => r[d.key]);
-    return d3.mean(vals) || 0;
-  });
+  const avgVals = dims.map(d => d3.mean(data, r => r[d.key]) || 0);
   const norm = dims.map((d, i) => Math.min(1, Math.max(0, avgVals[i] / d.max)));
   const points = angles.map((a, i) => {
     const r = radius * norm[i];
@@ -38,38 +45,64 @@ export function renderRadar(data) {
       const r = radius * lvl;
       return [centerX + r * Math.cos(a), centerY + r * Math.sin(a)];
     });
-    gridG.append('polygon').attr('points', pts.map(p => p.join(',')).join(' '))
-      .attr('fill', 'none').attr('stroke', 'var(--border)').attr('stroke-width', 0.8);
+    gridG.append('polygon')
+      .attr('points', pts.map(p => p.join(',')).join(' '))
+      .attr('fill', 'none')
+      .attr('stroke', 'var(--border)')
+      .attr('stroke-width', 0.8);
   });
+
   angles.forEach((a, i) => {
-    gridG.append('line').attr('x1', centerX).attr('y1', centerY)
-      .attr('x2', centerX + radius * Math.cos(a)).attr('y2', centerY + radius * Math.sin(a))
-      .attr('stroke', 'var(--border)').attr('stroke-width', 0.8);
-    const lx = centerX + (radius + 22) * Math.cos(a);
-    const ly = centerY + (radius + 22) * Math.sin(a);
-    gridG.append('text').attr('x', lx).attr('y', ly).attr('text-anchor', 'middle').attr('dominant-baseline', 'middle')
+    gridG.append('line')
+      .attr('x1', centerX).attr('y1', centerY)
+      .attr('x2', centerX + radius * Math.cos(a))
+      .attr('y2', centerY + radius * Math.sin(a))
+      .attr('stroke', 'var(--border)')
+      .attr('stroke-width', 0.8);
+    const lx = centerX + (radius + 22 * fontScale) * Math.cos(a);
+    const ly = centerY + (radius + 22 * fontScale) * Math.sin(a);
+    gridG.append('text')
+      .attr('x', lx).attr('y', ly)
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'middle')
       .attr('fill', 'var(--text)')
-      .style('font-size', '12px')
+      .style('font-size', (12 * fontScale) + 'px')
       .style('font-weight', '600')
-      .style('font-family', 'Inter, sans-serif') 
+      .style('font-family', 'Inter, sans-serif')
       .text(dims[i].label);
   });
 
-  svg.append('polygon').attr('points', points.map(p => p.join(',')).join(' '))
-    .attr('fill', 'var(--accent)').attr('fill-opacity', 0.3)
-    .attr('stroke', 'var(--accent)').attr('stroke-width', 2);
-  svg.selectAll('.radar-dot').data(points).enter().append('circle')
-    .attr('cx', d => d[0]).attr('cy', d => d[1]).attr('r', 4)
-    .attr('fill', 'var(--accent)').attr('stroke', 'var(--surface)').attr('stroke-width', 1.5);
+  svg.append('polygon')
+    .attr('points', points.map(p => p.join(',')).join(' '))
+    .attr('fill', 'var(--accent)')
+    .attr('fill-opacity', 0.3)
+    .attr('stroke', 'var(--accent)')
+    .attr('stroke-width', 2);
+
+  svg.selectAll('.radar-dot')
+    .data(points)
+    .enter().append('circle')
+    .attr('cx', d => d[0]).attr('cy', d => d[1])
+    .attr('r', 4 * fontScale)
+    .attr('fill', 'var(--accent)')
+    .attr('stroke', 'var(--surface)')
+    .attr('stroke-width', 1.5);
 
   const leg = d3.select('#radarLegend');
   leg.selectAll('*').remove();
-  leg.append('span').html(`<span class="dot" style="background:var(--accent);opacity:0.6;"></span> Average student profile`);
-  leg.append('span').style('color', 'var(--text-faint)').style('font-size', '14px').style('font-weight', '500')
+  leg.append('span')
+    .html(`<span class="dot" style="background:var(--accent);opacity:0.6;"></span> Average student profile`)
+    .style('font-size', (12 * fontScale) + 'px');
+  leg.append('span')
+    .style('color', 'var(--text-faint)')
+    .style('font-size', (12 * fontScale) + 'px')
+    .style('font-weight', '500')
     .text(' (higher = better, except AI hrs & anxiety)');
 
-  svg.append('polygon').attr('points', points.map(p => p.join(',')).join(' '))
-    .attr('fill', 'transparent').attr('stroke', 'none')
+  svg.append('polygon')
+    .attr('points', points.map(p => p.join(',')).join(' '))
+    .attr('fill', 'transparent')
+    .attr('stroke', 'none')
     .style('cursor', 'pointer')
     .on('mousemove', (evt) => {
       let html = '<b>Average profile</b>';

@@ -1,21 +1,33 @@
+// js/charts/usageBarDual.js
 import { MONTH_ORDER } from '../utils/constants.js';
-import { themeColors, showTip, hideTip } from '../utils/helpers.js';
+import { themeColors, showTip, hideTip, getFontScale } from '../utils/helpers.js';
 
 export function renderUsageBarDual(data) {
   const C = themeColors();
+  const fontScale = getFontScale();
   const el = d3.select('#chartUsageBarDual');
   el.selectAll('*').remove();
-  const W = el.node().clientWidth || 560, H = 280, M = { t: 20, r: 52, b: 44, l: 48 };
-  const svg = el.append('svg').attr('width', '100%').attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
+
+  const W = el.node().clientWidth || 560;
+  const H = 280;
+  const M = { t: 20 * fontScale, r: 52 * fontScale, b: 44 * fontScale, l: 48 * fontScale };
+  const svg = el.append('svg')
+    .attr('width', '100%')
+    .attr('height', H)
+    .attr('viewBox', `0 0 ${W} ${H}`)
+    .style('display', 'block');
 
   const months = MONTH_ORDER.filter(m => data.some(d => d.Month === m));
   if (months.length < 2) {
-    svg.append('text').attr('x', W/2).attr('y', H/2).attr('text-anchor', 'middle')
-      .style('fill', 'var(--text-muted)').text('Not enough months to show trend');
+    svg.append('text')
+      .attr('x', W/2).attr('y', H/2)
+      .attr('text-anchor', 'middle')
+      .style('fill', 'var(--text-muted)')
+      .style('font-size', (14 * fontScale) + 'px')
+      .text('Not enough months to show trend');
     return;
   }
 
-  // Aggregate
   const agg = months.map(m => {
     const sub = data.filter(d => d.Month === m);
     return {
@@ -25,34 +37,29 @@ export function renderUsageBarDual(data) {
     };
   });
 
-  // Scales – FORCE 0 INTO DOMAIN
   const x = d3.scaleBand().domain(months).range([M.l, W - M.r]).padding(0.2);
   const xSub = d3.scaleBand().domain(['gpa', 'ai']).range([0, x.bandwidth()]).padding(0.1);
-
   const gpaExtent = d3.extent(agg, d => d.gpa);
   const yGpa = d3.scaleLinear()
     .domain([Math.min(0, gpaExtent[0]), Math.max(0, gpaExtent[1])])
     .nice()
     .range([H - M.b, M.t]);
-
   const aiMax = d3.max(agg, d => d.aiHrs) || 1;
   const yAi = d3.scaleLinear()
     .domain([0, aiMax])
     .nice()
     .range([H - M.b, M.t]);
 
-  // ---- Draw grid, bars, axes in proper order ----
-  // 1. Grid (behind)
+  // Grid
   svg.append('g').attr('class', 'gridline')
     .attr('transform', `translate(${M.l},0)`)
-    .call(d3.axisLeft(yGpa).ticks(4).tickSize(-(W - M.l - M.r)).tickFormat(''));
+    .call(d3.axisLeft(yGpa).ticks(4).tickSize(-(W - M.l - M.r)).tickFormat(''))
+    .style('font-size', (10 * fontScale) + 'px');
 
-  // 2. Bars
-  // GPA
+  // Bars GPA
   svg.selectAll('.bar-gpa')
     .data(agg)
-    .enter()
-    .append('rect')
+    .enter().append('rect')
     .attr('class', 'bar-gpa')
     .attr('x', d => x(d.m) + xSub('gpa'))
     .attr('y', d => d.gpa >= 0 ? yGpa(d.gpa) : yGpa(0))
@@ -67,11 +74,10 @@ export function renderUsageBarDual(data) {
     ))
     .on('mouseleave', hideTip);
 
-  // AI hours
+  // Bars AI
   svg.selectAll('.bar-ai')
     .data(agg)
-    .enter()
-    .append('rect')
+    .enter().append('rect')
     .attr('class', 'bar-ai')
     .attr('x', d => x(d.m) + xSub('ai'))
     .attr('y', d => yAi(d.aiHrs))
@@ -86,22 +92,29 @@ export function renderUsageBarDual(data) {
     ))
     .on('mouseleave', hideTip);
 
-  // 3. Axes (on top)
+  // Axes
   svg.append('g').attr('class', 'axis')
     .attr('transform', `translate(0,${H - M.b})`)
-    .call(d3.axisBottom(x));
+    .call(d3.axisBottom(x))
+    .style('font-size', (10 * fontScale) + 'px');
 
   svg.append('g').attr('class', 'axis')
     .attr('transform', `translate(${M.l},0)`)
-    .call(d3.axisLeft(yGpa).ticks(4).tickFormat(d3.format('+.2f')));
+    .call(d3.axisLeft(yGpa).ticks(4).tickFormat(d3.format('+.2f')))
+    .style('font-size', (10 * fontScale) + 'px');
 
   svg.append('g').attr('class', 'axis')
     .attr('transform', `translate(${W - M.r},0)`)
-    .call(d3.axisRight(yAi).ticks(4).tickFormat(d => d + 'h'));
+    .call(d3.axisRight(yAi).ticks(4).tickFormat(d => d + 'h'))
+    .style('font-size', (10 * fontScale) + 'px');
 
   // Legend
   const legend = d3.select('#usageBarDualLegend');
   legend.selectAll('*').remove();
-  legend.append('span').html(`<i style="background:${C.mint}"></i> GPA improvement (left axis)`);
-  legend.append('span').html(`<i style="background:${C.blue}"></i> Avg AI hours / week (right axis)`);
+  legend.append('span')
+    .html(`<i style="background:${C.mint}"></i> GPA improvement (left axis)`)
+    .style('font-size', (11 * fontScale) + 'px');
+  legend.append('span')
+    .html(`<i style="background:${C.blue}"></i> Avg AI hours / week (right axis)`)
+    .style('font-size', (11 * fontScale) + 'px');
 }

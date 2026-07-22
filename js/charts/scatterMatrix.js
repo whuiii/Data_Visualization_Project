@@ -1,13 +1,15 @@
 // js/charts/scatterMatrix.js
-import { themeColors, showTip, hideTip } from '../utils/helpers.js';
+import { themeColors, showTip, hideTip, getFontScale } from '../utils/helpers.js';
 
 export function renderScatterMatrix(fullData, sampledData) {
   const C = themeColors();
+  const fontScale = getFontScale();
   const el = d3.select('#chartScatterMatrix');
   el.selectAll('*').remove();
+
   const W = el.node().clientWidth || 800;
   const size = Math.min(W, 700);
-  const margin = { top: 30, right: 30, bottom: 40, left: 40 };
+  const margin = { top: 30 * fontScale, right: 30 * fontScale, bottom: 40 * fontScale, left: 40 * fontScale };
   const cellSize = (size - margin.left - margin.right) / 5;
 
   const variables = [
@@ -22,16 +24,15 @@ export function renderScatterMatrix(fullData, sampledData) {
   const svg = el.append('svg')
     .attr('width', '100%')
     .attr('height', size)
-    .attr('viewBox', `0 0 ${size} ${size}`);
+    .attr('viewBox', `0 0 ${size} ${size}`)
+    .style('display', 'block');
 
   const dataForScales = fullData.length ? fullData : [];
   const dataForPoints = sampledData;
 
-  // Pre‑compute global extents for each variable to keep axes consistent
   const extents = {};
   variables.forEach(v => {
     extents[v.key] = d3.extent(dataForScales, d => d[v.key]);
-    // Add a tiny padding
     const pad = (extents[v.key][1] - extents[v.key][0]) * 0.05 || 0.5;
     extents[v.key] = [extents[v.key][0] - pad, extents[v.key][1] + pad];
   });
@@ -41,7 +42,6 @@ export function renderScatterMatrix(fullData, sampledData) {
       const g = svg.append('g')
         .attr('transform', `translate(${j * cellSize + margin.left}, ${i * cellSize + margin.top})`);
 
-      // Cell background
       g.append('rect')
         .attr('width', cellSize)
         .attr('height', cellSize)
@@ -57,7 +57,7 @@ export function renderScatterMatrix(fullData, sampledData) {
           .attr('y', cellSize / 2)
           .attr('text-anchor', 'middle')
           .attr('dominant-baseline', 'middle')
-          .style('font-size', '11px')
+          .style('font-size', (11 * fontScale) + 'px')
           .style('font-weight', '600')
           .style('fill', 'var(--text)')
           .text(variables[i].label);
@@ -73,39 +73,35 @@ export function renderScatterMatrix(fullData, sampledData) {
         .domain(extents[yVar])
         .range([cellSize - 4, 4]);
 
-      // Axes (only for outer rows/cols)
       if (i === n - 1) {
         const axisG = g.append('g')
           .attr('transform', `translate(0, ${cellSize})`)
           .call(d3.axisBottom(xScaleLocal).ticks(3).tickSize(4));
         axisG.selectAll('text')
-          .style('font-size', '7px')
+          .style('font-size', (7 * fontScale) + 'px')
           .style('fill', 'var(--text-faint)');
       }
       if (j === 0) {
         const axisG = g.append('g')
           .call(d3.axisLeft(yScaleLocal).ticks(3).tickSize(4));
         axisG.selectAll('text')
-          .style('font-size', '7px')
+          .style('font-size', (7 * fontScale) + 'px')
           .style('fill', 'var(--text-faint)');
       }
 
-      // Points – smaller and semi‑transparent
       const points = dataForPoints.map(d => ({ x: d[xVar], y: d[yVar], student: d }));
       g.selectAll('circle')
         .data(points)
-        .enter()
-        .append('circle')
+        .enter().append('circle')
         .attr('cx', d => xScaleLocal(d.x))
         .attr('cy', d => yScaleLocal(d.y))
-        .attr('r', 1.8)
+        .attr('r', 1.8 * fontScale)
         .attr('fill', '#64B5F6')
         .attr('opacity', 0.25)
         .on('mousemove', (evt, d) => {
-          // Highlight on hover
           d3.select(evt.currentTarget)
             .transition().duration(100)
-            .attr('r', 4)
+            .attr('r', 4 * fontScale)
             .attr('opacity', 0.8)
             .attr('fill', '#1E88E5');
           showTip(
@@ -113,16 +109,16 @@ export function renderScatterMatrix(fullData, sampledData) {
             evt
           );
         })
-        .on('mouseleave', function (evt) {
+        .on('mouseleave', function () {
           d3.select(this)
             .transition().duration(200)
-            .attr('r', 1.8)
+            .attr('r', 1.8 * fontScale)
             .attr('opacity', 0.25)
             .attr('fill', '#64B5F6');
           hideTip();
         });
 
-      // Add a simple linear regression line
+      // Regression line
       const xValues = points.map(d => d.x);
       const yValues = points.map(d => d.y);
       const meanX = d3.mean(xValues);
@@ -131,7 +127,6 @@ export function renderScatterMatrix(fullData, sampledData) {
       const den = d3.sum(xValues.map(x => (x - meanX) ** 2));
       const slope = den ? num / den : 0;
       const intercept = meanY - slope * meanX;
-
       const xMin = xScaleLocal.domain()[0];
       const xMax = xScaleLocal.domain()[1];
       const yMin = slope * xMin + intercept;

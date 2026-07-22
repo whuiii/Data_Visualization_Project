@@ -36,14 +36,11 @@ let renderPending = false;
 
 function clearCharts() {
   const selectors = [
-    // Overview page
     '#chartDonut', '#chartScatter', '#chartRadar', '#chartPaidPie',
     '#chartUsageBarDual', '#chartHeatmapLecturer', '#chartScatterMatrix',
     '#chartHistogram', '#chartUsageLine', '#chartStackedBar',
     '#chartExecutiveTrend', '#chartExecutiveBar', '#chartExecutiveTreemap',
-    // Advanced page
     '#chartDrilldown', '#chartHeatmap', '#chartParallel', '#chartTrend',
-    // Timeline
     '#chartTimeline'
   ];
   selectors.forEach(sel => d3.select(sel).selectAll('*').remove());
@@ -61,13 +58,11 @@ const refreshAll = function () {
 
   clearCharts();
 
-  // Always render shared components
   renderKPIs(fullData);
   renderInsights(fullData);
   renderSearchHit(fullData);
   renderTimeline(fullData);
 
-  // Always render advanced charts (shared across all personas, on the Advanced page)
   renderDrilldown(fullData);
   renderHeatmap('#chartHeatmap', fullData);
   renderParallel(fullData, sampledData);
@@ -78,12 +73,10 @@ const refreshAll = function () {
   const lecturerView = document.getElementById('lecturerView');
   const executiveView = document.getElementById('executiveView');
 
-  // Hide all
   if (studentView) studentView.style.display = 'none';
   if (lecturerView) lecturerView.style.display = 'none';
   if (executiveView) executiveView.style.display = 'none';
 
-  // Show the appropriate one
   if (persona === 'student') {
     if (studentView) studentView.style.display = 'block';
   } else if (persona === 'lecturer') {
@@ -115,7 +108,6 @@ const refreshAll = function () {
 
 window.__refreshAll = debounce(refreshAll, 150);
 
-// Paid filter
 window.__setPaidFilter = (isPaid) => {
   state.paidFilter = isPaid;
   window.__refreshAll();
@@ -142,7 +134,6 @@ function applyPersona(persona) {
 
   body.attr('class', currentTheme + ' ' + modeClass);
 
-  // Hide search for executive, show for others
   const searchWrap = document.getElementById('searchWrap');
   if (searchWrap) searchWrap.style.display = (persona === 'executive') ? 'none' : 'flex';
 
@@ -177,6 +168,7 @@ function attachUIListeners() {
     window.__refreshAll();
   });
 
+  // ---- Font slider - triggers refresh ----
   const slider = document.getElementById('fontSlider');
   const label = document.getElementById('fontSizeLabel');
   if (slider && label) {
@@ -184,6 +176,7 @@ function attachUIListeners() {
       const val = parseFloat(this.value);
       label.textContent = Math.round(val * 100) + '%';
       document.documentElement.style.setProperty('--font-scale', val);
+      window.__refreshAll();
     });
   }
 
@@ -336,3 +329,37 @@ function loadData() {
 
 attachUIListeners();
 loadData();
+
+// ============================================================
+// Font scale persistence across persona/tab changes
+// ============================================================
+(function initFontSize() {
+  const slider = document.getElementById('fontSlider');
+  const label = document.getElementById('fontSizeLabel');
+  if (!slider) return;
+
+  function applyFontSize(value) {
+    const val = parseFloat(value);
+    document.documentElement.style.setProperty('--font-scale', val);
+    if (label) label.textContent = Math.round(val * 100) + '%';
+    window.__refreshAll();
+  }
+
+  applyFontSize(slider.value);
+
+  slider.addEventListener('input', function() {
+    applyFontSize(this.value);
+  });
+
+  document.querySelectorAll('.persona-card').forEach(card => {
+    card.addEventListener('click', function() {
+      setTimeout(() => applyFontSize(slider.value), 100);
+    });
+  });
+
+  document.querySelectorAll('.navitem').forEach(item => {
+    item.addEventListener('click', function() {
+      setTimeout(() => applyFontSize(slider.value), 100);
+    });
+  });
+})();

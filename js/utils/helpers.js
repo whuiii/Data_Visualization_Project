@@ -1,3 +1,4 @@
+// js/utils/helpers.js
 import { CHART_QUALITATIVE } from './constants.js';
 
 export function themeColors() {
@@ -81,4 +82,11 @@ export function pearson(data, a, b) {
     dy += (ys[i] - my) ** 2;
   }
   return num / Math.sqrt(dx * dy || 1);
+}
+
+// ---- NEW: get current font scale ----
+export function getFontScale() {
+  const root = document.documentElement;
+  const scale = getComputedStyle(root).getPropertyValue('--font-scale').trim();
+  return parseFloat(scale) || 1;
 }
