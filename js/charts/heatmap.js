@@ -12,7 +12,7 @@ export function renderHeatmap(selector, data) {
   const useCases = Array.from(new Set(RAW_DATA.map(d => d.Primary_Use_Case)));
   const W = el.node().clientWidth || 900;
   const H = 300;
-  const M = { t: 30 * fontScale, r: 16 * fontScale, b: 50 * fontScale, l: 100 * fontScale };
+  const M = { t: 30 * fontScale, r: 16 * fontScale, b: 80 * fontScale, l: 100 * fontScale };
   const svg = el.append('svg')
     .attr('width', '100%')
     .attr('height', H)
@@ -97,14 +97,13 @@ export function renderHeatmap(selector, data) {
   legend.selectAll('*').remove();
   legend.append('span')
     .html(`<i style="background:${C.red}"></i> GPA decline`)
-    .style('font-size', (11 * fontScale) + 'px');
+    .style('font-size', (14 * fontScale) + 'px');
   legend.append('span')
-    .html(`<i style="background:${C.surface3};border:1px solid var(--border)"></i> ~no change`)
-    .style('font-size', (11 * fontScale) + 'px');
+    .html(`<i style="background:${C.surface3};border:1px solid var(--border)"></i> No Changes`)
+    .style('font-size', (14 * fontScale) + 'px');
   legend.append('span')
     .html(`<i style="background:${C.mint}"></i> GPA improvement`)
-    .style('font-size', (11 * fontScale) + 'px');
+    .style('font-size', (14 * fontScale) + 'px');
   legend.append('span')
-    .text('Click a cell to filter that major')
-    .style('font-size', (11 * fontScale) + 'px');
+    .style('font-size', (14 * fontScale) + 'px');
 }

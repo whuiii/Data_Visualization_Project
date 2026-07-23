@@ -103,6 +103,6 @@ export function renderParallel(fullData, sampledData) {
     const s = legend.append('span');
     s.append('i').style('background', bColor(l));
     s.append('text').text('Burnout: ' + l)
-      .style('font-size', (11 * fontScale) + 'px');
+      .style('font-size', (14 * fontScale) + 'px');
   });
 }

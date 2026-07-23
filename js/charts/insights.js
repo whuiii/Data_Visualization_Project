@@ -1,4 +1,4 @@
-import { themeColors, iconSvg, fmt2, pearson } from '../utils/helpers.js';
+import { themeColors, iconSvg } from '../utils/helpers.js';
 import { state, getRawData } from '../state.js';
 
 export function renderSearchHit(data) {
@@ -19,61 +19,101 @@ export function renderSearchHit(data) {
 export function renderInsights(data) {
   const wrap = d3.select('#insightsWrap');
   wrap.selectAll('*').remove();
-  if (data.length < 5) {
+
+  // Show message if no data
+  if (!data || data.length < 5) {
     const card = wrap.append('div').attr('class', 'insight-card neutral');
     card.append('div').attr('class', 'ic').html(iconSvg('info'));
     card.append('div').attr('class', 'body').html('<h4>Not enough data</h4><p>Loosen your filters to generate insights.</p>');
     return;
   }
 
-  const bins = [[0, 5], [5, 10], [10, 15], [15, 20], [20, 40]];
-  const binStats = bins.map(([lo, hi]) => {
-    const sub = data.filter(d => d.Weekly_GenAI_Hours >= lo && d.Weekly_GenAI_Hours < hi);
-    return { lo, hi, n: sub.length, avg: sub.length ? d3.mean(sub, d => d.GPA_Improvement) : null };
-  }).filter(b => b.n >= 8);
-  const best = binStats.slice().sort((a, b) => d3.descending(a.avg, b.avg))[0];
-  const worst = binStats.slice().sort((a, b) => d3.ascending(a.avg, b.avg))[0];
-
-  const median = d3.median(data, d => d.Weekly_GenAI_Hours);
-  const hi = data.filter(d => d.Weekly_GenAI_Hours >= median), lo = data.filter(d => d.Weekly_GenAI_Hours < median);
-  const hiGpa = d3.mean(hi, d => d.GPA_Improvement), loGpa = d3.mean(lo, d => d.GPA_Improvement);
-  const hiSkill = d3.mean(hi, d => d.Skill_Retention_Score), loSkill = d3.mean(lo, d => d.Skill_Retention_Score);
-  const hiBurnout = d3.mean(hi, d => d.Burnout_Risk_Level === 'High' ? 1 : 0), loBurnout = d3.mean(lo, d => d.Burnout_Risk_Level === 'High' ? 1 : 0);
-  const corrDepRetention = pearson(data, 'Perceived_AI_Dependency', 'Skill_Retention_Score');
-  const corrHoursAnxiety = pearson(data, 'Weekly_GenAI_Hours', 'Anxiety_Level_During_Exams');
-  const topMajor = d3.rollups(data, v => d3.mean(v, d => d.GPA_Improvement), d => d.Major_Category).sort((a, b) => d3.descending(a[1], b[1]))[0];
-  const policyAgg = d3.rollups(data, v => d3.mean(v, d => d.GPA_Improvement), d => d.Institutional_Policy).sort((a, b) => d3.descending(a[1], b[1]));
-
-  const findings = [
-    { cls: 'good', icon: 'check', title: 'Sweet spot for AI usage', body: best ? `Students using GenAI tools <b class="num">${best.lo}–${best.hi} hrs/week</b> show the strongest average GPA gain (<b class="num">${d3.format('+.2f')(best.avg)}</b>)${worst ? `, while <b class="num">${worst.lo}–${worst.hi} hrs/week</b> users average <b class="num">${d3.format('+.2f')(worst.avg)}</b>` : ''}. This supports a moderate, purposeful-use policy over an outright ban or unlimited access.` : 'Not enough spread in the current filter to isolate a sweet spot.' },
-    { cls: 'neutral', icon: 'info', title: 'High vs. low AI users', body: `Splitting at the median (${fmt2(median)} hrs/week): high-usage students average <b class="num">${d3.format('+.2f')(hiGpa)}</b> GPA change vs. <b class="num">${d3.format('+.2f')(loGpa)}</b> for low-usage students — but skill-retention runs <b class="num">${Math.round(hiSkill)}</b> vs. <b class="num">${Math.round(loSkill)}</b>. Heavier AI users trend toward weaker independent skill retention even when grades hold up.` },
-    { cls: corrDepRetention < -0.1 ? 'risk' : 'neutral', icon: corrDepRetention < -0.1 ? 'alert' : 'info', title: 'AI dependency and skill retention', body: `Perceived AI dependency correlates with skill-retention score at <b class="num">r = ${corrDepRetention.toFixed(2)}</b> in the current filter. ${corrDepRetention < -0.05 ? 'The negative relationship suggests dependency-heavy usage patterns deserve advising attention, even where grades look fine.' : 'The relationship is weak here — worth re-checking on the full, unfiltered dataset.'}` },
-    { cls: hiBurnout > loBurnout ? 'risk' : 'neutral', icon: hiBurnout > loBurnout ? 'alert' : 'info', title: 'Burnout risk and usage', body: `High-usage students show <b class="num">${d3.format('.0%')(hiBurnout)}</b> high-burnout-risk rate vs. <b class="num">${d3.format('.0%')(loBurnout)}</b> for low-usage students. Weekly hours vs. exam anxiety correlation: <b class="num">r = ${corrHoursAnxiety.toFixed(2)}</b>.` },
-    { cls: 'good', icon: 'check', title: 'Best-performing segment', body: topMajor ? `<b>${topMajor[0]}</b> shows the strongest average GPA change in the current view (<b class="num">${d3.format('+.2f')(topMajor[1])}</b>) — see Fig. 6 for which use cases drive it.` : '' },
-    { cls: 'neutral', icon: 'info', title: 'Institutional policy and outcomes', body: policyAgg.length ? `Ranked by average GPA change: ${policyAgg.map(p => `<b>${p[0].replace(/_/g, ' ')}</b> (<span class="num">${d3.format('+.2f')(p[1])}</span>)`).join(' · ')}. Read this as descriptive, not causal — cohorts under different policies may differ in other ways too.` : '' },
+  // ─── Your 6 Updated Insights ──────────────────────────────────────
+  const insights = [
+    {
+      cls: 'good',
+      icon: 'check',
+      title: 'Insight 1: The Optimal AI Usage Threshold',
+      body: `
+        <strong>Question:</strong> What level of weekly GenAI usage produces the greatest academic improvement?<br><br>
+        <strong>Analysis:</strong> Students using GenAI for 5–10 hours per week achieve the highest average GPA improvement (<b class="num">+0.23</b>). Performance declines when usage exceeds 20 hours per week, with gains falling to <b class="num">+0.16</b>.<br><br>
+        <strong>Insight:</strong> Moderate AI usage enhances learning, while excessive reliance reduces academic benefits, suggesting diminishing returns.<br><br>
+        <strong>Recommendation:</strong> Encourage students to use GenAI as a learning aid within the 5–10 hour/week range rather than as a replacement for independent study.
+      `
+    },
+    {
+      cls: 'good',
+      icon: 'check',
+      title: 'Insight 2: Purpose of AI Matters More Than Usage',
+      body: `
+        <strong>Question:</strong> Does the way students use AI influence academic outcomes?<br><br>
+        <strong>Analysis:</strong> STEM students record the highest GPA improvement (<b class="num">+0.20</b>). Students using AI for debugging and problem-solving gain up to <b class="num">+0.25 GPA</b>, whereas direct answer generation results in only <b class="num">+0.13</b>.<br><br>
+        <strong>Insight:</strong> Academic benefits depend more on how AI is used than how often it is used. Active learning tasks produce stronger outcomes than passive answer generation.<br><br>
+        <strong>Recommendation:</strong> Develop faculty-specific AI guidance that promotes problem-solving, critical thinking, and ethical AI practices.
+      `
+    },
+    {
+      cls: 'good',
+      icon: 'check',
+      title: 'Insight 3: Guided AI Policies Outperform Strict Bans',
+      body: `
+        <strong>Question:</strong> Which institutional AI policy leads to better academic performance?<br><br>
+        <strong>Analysis:</strong> Faculties adopting "Allowed with Citation" and "Actively Encouraged" policies achieve the highest GPA gains (<b class="num">+0.21</b>), while Strict Ban policies show the lowest improvement (<b class="num">+0.19</b>).<br><br>
+        <strong>Insight:</strong> Structured AI governance delivers better learning outcomes than restrictive policies.<br><br>
+        <strong>Recommendation:</strong> Replace blanket bans with clear institutional guidelines that define appropriate AI use and citation requirements.
+      `
+    },
+    {
+      cls: 'risk',
+      icon: 'alert',
+      title: 'Insight 4: Heavy AI Usage Increases Burnout Risk',
+      body: `
+        <strong>Question:</strong> How does extensive AI usage affect student well-being?<br><br>
+        <strong>Analysis:</strong> Burnout risk increases significantly beyond 15–20 AI hours per week. High AI usage is associated with greater anxiety, reduced study time, and limited additional GPA improvement. Around <b class="num">25%</b> of students are classified as high burnout risk.<br><br>
+        <strong>Insight:</strong> Excessive AI reliance negatively affects student well-being without providing meaningful academic gains.<br><br>
+        <strong>Recommendation:</strong> Monitor high AI usage and provide early academic support, while promoting healthy AI usage within recommended limits.
+      `
+    },
+    {
+      cls: 'neutral',
+      icon: 'info',
+      title: 'Insight 5: AI Adoption Differs Across Disciplines',
+      body: `
+        <strong>Question:</strong> Why do AI adoption rates vary across faculties?<br><br>
+        <strong>Analysis:</strong> STEM students report the highest average AI usage (<b class="num">10.4 hours/week</b>), followed by Business (<b class="num">8.3 hours/week</b>). Humanities, Arts, and Medical students consistently record lower usage levels.<br><br>
+        <strong>Insight:</strong> AI adoption reflects the suitability of AI for discipline-specific tasks rather than differences in student interest.<br><br>
+        <strong>Recommendation:</strong> Develop discipline-specific AI training that aligns with each faculty's learning activities and assessment methods.
+      `
+    },
+    {
+      cls: 'neutral',
+      icon: 'info',
+      title: 'Insight 6: Early-Year Students Depend More on AI',
+      body: `
+        <strong>Question:</strong> How does AI usage differ across academic levels?<br><br>
+        <strong>Analysis:</strong> Freshmen and sophomore students demonstrate the highest AI usage, while graduate students use AI more selectively. The average skill retention score across the cohort is <b class="num">76/100</b>.<br><br>
+        <strong>Insight:</strong> Early-stage students rely on AI to support foundational learning, but excessive dependence may weaken long-term skill development.<br><br>
+        <strong>Recommendation:</strong> Introduce AI literacy programmes in the first year that emphasise using AI as a learning assistant rather than a substitute for independent thinking.
+      `
+    }
   ];
 
-  const recommendations = [
-    { title: 'Set guided-use guidance, not a ban', body: best ? `Nudge students toward the empirically strongest band (<b class="num">${best.lo}–${best.hi} hrs/week</b>) through onboarding and advisor conversations, rather than an outright ban or unlimited access — both extremes underperform it in this cohort.` : 'Once usage data is available for this filter, anchor guidance to the strongest-performing hours band.' },
-    { title: 'Flag the high-dependency, low-retention cluster', body: 'Cross-reference Fig. 7 (parallel coordinates): students combining high AI-dependency with low skill-retention are the group most likely to need proactive academic advising, even before it shows up in their GPA.' },
-    { title: 'Review policy against outcomes each term', body: policyAgg.length ? `Track GPA change by institutional policy (currently led by <b>${policyAgg[0][0].replace(/_/g, ' ')}</b>) alongside the monthly anxiety trend in Fig. 1 — a rising anxiety line without matching GPA gains is the signal to revisit the policy.` : 'Track GPA change by institutional policy alongside the monthly anxiety trend to know when a policy review is due.' },
-  ];
+  // ─── Render the 6 insight cards ──────────────────────────────────
+  insights.forEach(insight => {
+    const card = wrap.append('div')
+      .attr('class', `insight-card ${insight.cls}`);
 
-  wrap.append('div').attr('class', 'insight-section-label').html(`${iconSvg('info')} Findings`);
-  findings.forEach(c => {
-    const card = wrap.append('div').attr('class', 'insight-card ' + c.cls);
-    card.append('div').attr('class', 'ic').html(iconSvg(c.icon));
-    const body = card.append('div').attr('class', 'body');
-    body.append('h4').text(c.title);
-    body.append('p').html(c.body);
-  });
+    card.append('div')
+      .attr('class', 'ic')
+      .html(iconSvg(insight.icon));
 
-  wrap.append('div').attr('class', 'insight-section-label').html(`${iconSvg('lightbulb')} Recommendations`);
-  recommendations.forEach(c => {
-    const card = wrap.append('div').attr('class', 'insight-card reco');
-    card.append('div').attr('class', 'ic').html(iconSvg('lightbulb'));
-    const body = card.append('div').attr('class', 'body');
-    body.append('h4').text(c.title);
-    body.append('p').html(c.body);
+    const body = card.append('div')
+      .attr('class', 'body');
+
+    body.append('h4')
+      .text(insight.title);
+
+    body.append('p')
+      .html(insight.body);
   });
 }

@@ -14,10 +14,10 @@ export function renderExecutiveBar(data) {
   // ---- Margins with plenty of extra space ----
   // Left margin is large enough for long major names + ticks + rotated label
   const M = {
-    t: 40 * fontScale,
+    t: 50 * fontScale,
     r: 30 * fontScale,
     b: 55 * fontScale,   // extra bottom space for x-axis label
-    l: 160 * fontScale   // extra left space for y-axis labels + rotated label
+    l: 110 * fontScale   // extra left space for y-axis labels + rotated label
   };
 
   const svg = el.append('svg')

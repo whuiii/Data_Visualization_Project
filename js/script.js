@@ -41,72 +41,100 @@ function clearCharts() {
     '#chartHistogram', '#chartUsageLine', '#chartStackedBar',
     '#chartExecutiveTrend', '#chartExecutiveBar', '#chartExecutiveTreemap',
     '#chartDrilldown', '#chartHeatmap', '#chartParallel', '#chartTrend',
-    '#chartTimeline'
+    '#chartTimeline',
+    // additional containers for safety
+    '#chartScatterMatrix', '#chartParallel', '#chartHeatmap'
   ];
-  selectors.forEach(sel => d3.select(sel).selectAll('*').remove());
+  selectors.forEach(sel => {
+    const el = d3.select(sel);
+    if (!el.empty()) el.selectAll('*').remove();
+  });
 }
 
 const refreshAll = function () {
-  const fullData = getFiltered();
-  const sampledData = getFilteredSampled();
-
-  const countEl = document.getElementById('recordCount');
-  if (countEl) countEl.textContent = fullData.length.toLocaleString();
-
   if (renderPending) return;
   renderPending = true;
 
-  clearCharts();
+  try {
+    const fullData = getFiltered();
+    const sampledData = getFilteredSampled();
 
-  renderKPIs(fullData);
-  renderInsights(fullData);
-  renderSearchHit(fullData);
-  renderTimeline(fullData);
+    const countEl = document.getElementById('recordCount');
+    if (countEl) countEl.textContent = fullData.length.toLocaleString();
 
-  
-  renderHeatmap('#chartHeatmap', fullData);
-  renderParallel(fullData, sampledData);
-  renderScatterMatrix(fullData, sampledData);
+    // Clear previous chart contents
+    clearCharts();
 
-  
+    // Always render global components
+    renderKPIs(fullData);
+    renderInsights(fullData);
+    renderSearchHit(fullData);
+    renderTimeline(fullData);
 
-  const persona = state.persona;
-  const studentView = document.getElementById('studentView');
-  const lecturerView = document.getElementById('lecturerView');
-  const executiveView = document.getElementById('executiveView');
+    // ---- Common charts for ALL personas (shared containers) ----
+    renderHeatmap('#chartHeatmap', fullData);
+    renderParallel(fullData, sampledData);
+    renderScatterMatrix(fullData, sampledData);
 
-  if (studentView) studentView.style.display = 'none';
-  if (lecturerView) lecturerView.style.display = 'none';
-  if (executiveView) executiveView.style.display = 'none';
+    const persona = state.persona;
+    const studentView = document.getElementById('studentView');
+    const lecturerView = document.getElementById('lecturerView');
+    const executiveView = document.getElementById('executiveView');
 
-  if (persona === 'student') {
-    if (studentView) studentView.style.display = 'block';
-  } else if (persona === 'lecturer') {
-    if (lecturerView) lecturerView.style.display = 'block';
-  } else if (persona === 'executive') {
-    if (executiveView) executiveView.style.display = 'block';
-  }
+    // Hide all views first
+    if (studentView) studentView.style.display = 'none';
+    if (lecturerView) lecturerView.style.display = 'none';
+    if (executiveView) executiveView.style.display = 'none';
 
-  requestAnimationFrame(() => {
-    if (persona === 'student') {
-      renderDonut(fullData);
-      renderUsageBarDual(fullData);
-      renderRadar(fullData);
-      renderScatter(fullData, sampledData);
-      renderPaidPie(fullData);
-    } else if (persona === 'lecturer') {
-      renderDrilldown(fullData);
-      renderTrend(fullData);
-      renderStackedBar(fullData);
-      renderHistogram(fullData);
-      renderUsageLine(fullData);
-    } else if (persona === 'executive') {
-      renderExecutiveTrend(fullData);
-      renderExecutiveBar(fullData);
-      renderExecutiveTreemap(fullData);
+    // Show only the active persona's view
+    if (persona === 'student' && studentView) {
+      studentView.style.display = 'block';
+    } else if (persona === 'lecturer' && lecturerView) {
+      lecturerView.style.display = 'block';
+    } else if (persona === 'executive' && executiveView) {
+      executiveView.style.display = 'block';
     }
+
+    // Render persona‑specific charts asynchronously
+    requestAnimationFrame(() => {
+      if (persona === 'student') {
+        renderDonut(fullData);
+        renderUsageBarDual(fullData);
+        renderRadar(fullData);
+        renderScatter(fullData, sampledData);
+        renderPaidPie(fullData);
+      } else if (persona === 'lecturer') {
+        renderDrilldown(fullData);
+        renderTrend(fullData);
+        renderStackedBar(fullData);
+        renderHistogram(fullData);
+        renderUsageLine(fullData);
+      } else if (persona === 'executive') {
+        renderExecutiveTrend(fullData);
+        renderExecutiveBar(fullData);
+        renderExecutiveTreemap(fullData);
+      }
+
+      // After rendering, fade in the active view
+      const studentView = document.getElementById('studentView');
+      const lecturerView = document.getElementById('lecturerView');
+      const executiveView = document.getElementById('executiveView');
+
+      [studentView, lecturerView, executiveView].forEach(view => {
+        if (view) {
+          view.classList.remove('rendering');
+          if (view.style.display !== 'none') {
+            view.classList.add('active');
+          }
+        }
+      });
+
+      renderPending = false;
+    });
+  } catch (error) {
+    console.error('Error during refreshAll:', error);
     renderPending = false;
-  });
+  }
 };
 
 window.__refreshAll = debounce(refreshAll, 150);
@@ -117,15 +145,18 @@ window.__setPaidFilter = (isPaid) => {
 };
 
 function applyPersona(persona) {
+  // Store persona in state
   state.persona = persona;
+
+  // Update persona card active state
   d3.selectAll('.persona-card').classed('active', false);
   d3.select(`.persona-card[data-persona="${persona}"]`).classed('active', true);
 
+  // Update body class for font size (mode)
   const body = d3.select('body');
   body.classed('mode-standard', false);
   body.classed('mode-accessible', false);
   body.classed('mode-simple', false);
-
   let modeClass = 'mode-standard';
   if (persona === 'student') modeClass = 'mode-standard';
   else if (persona === 'lecturer') modeClass = 'mode-accessible';
@@ -134,13 +165,67 @@ function applyPersona(persona) {
   let currentTheme = 'theme-light';
   const themeMatch = body.attr('class').match(/theme-\S+/);
   if (themeMatch) currentTheme = themeMatch[0];
-
   body.attr('class', currentTheme + ' ' + modeClass);
 
+  // Show/hide search bar
   const searchWrap = document.getElementById('searchWrap');
-  if (searchWrap) searchWrap.style.display = (persona === 'executive') ? 'none' : 'flex';
+  if (persona === 'executive') {
+    searchWrap.style.display = 'none';
+  } else {
+    searchWrap.style.display = 'flex';
+  }
 
-  setTimeout(() => window.__refreshAll(), 50);
+  // Show/hide advanced details (only for student/lecturer)
+  const details = document.querySelector('details');
+  if (details) {
+    if (persona === 'student' || persona === 'lecturer') {
+      details.style.display = 'block';
+    } else {
+      details.style.display = 'none';
+    }
+  }
+
+  // --- Smooth transition logic ---
+  const studentView = document.getElementById('studentView');
+  const lecturerView = document.getElementById('lecturerView');
+  const executiveView = document.getElementById('executiveView');
+
+  // Remove active class from all views (fade out)
+  [studentView, lecturerView, executiveView].forEach(view => {
+    if (view) {
+      view.classList.remove('active');
+      view.classList.add('rendering');
+    }
+  });
+
+  // After a short delay, switch display and render
+  setTimeout(() => {
+    // Hide all views
+    [studentView, lecturerView, executiveView].forEach(view => {
+      if (view) view.style.display = 'none';
+    });
+
+    // Show the target view (hidden initially)
+    let targetView = null;
+    if (persona === 'student') targetView = studentView;
+    else if (persona === 'lecturer') targetView = lecturerView;
+    else if (persona === 'executive') targetView = executiveView;
+
+    if (targetView) {
+      targetView.style.display = 'block';
+    }
+
+    // Trigger render – will add 'active' class after charts are drawn
+    window.__refreshAll();
+
+    // Fallback: if render doesn't complete, force active after 600ms
+    setTimeout(() => {
+      if (targetView) {
+        targetView.classList.remove('rendering');
+        targetView.classList.add('active');
+      }
+    }, 600);
+  }, 200); // 200ms fade-out buffer
 }
 
 function navigateTo(page) {

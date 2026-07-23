@@ -1263,3 +1263,39 @@ svg text,
     gap: 6px;
     white-space: nowrap;           /* Prevents wrapping inside items */
 }
+
+/* Replace the old px values with these em values */
+.insight-card h4 {
+    font-size: 1.15em;   /* Slightly larger than body text (e.g., 16.1px on Student, 20.7px on Executive) */
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text);
+    letter-spacing: -0.01em;
+}
+.insight-card p {
+    font-size: 0.95em;   /* Slightly smaller than body text, but still scales */
+    color: var(--text-muted);
+    line-height: 1.7;
+    max-width: 720px;
+}
+
+/* Fade transition for view switching */
+#studentView,
+#lecturerView {
+    transition: opacity 0.4s ease;
+    opacity: 0;
+    display: none;   /* hidden by default, toggled via JS */
+}
+
+#studentView.active,
+#lecturerView.active {
+    opacity: 1;
+    display: block;
+}
+
+/* Prevent flicker during re-render */
+#studentView.rendering,
+#lecturerView.rendering {
+    opacity: 0 !important;
+    transition: none;
+}
