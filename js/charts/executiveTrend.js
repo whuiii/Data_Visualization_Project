@@ -10,7 +10,7 @@ export function renderExecutiveTrend(data) {
 
   const W = el.node().clientWidth || 600;
   const H = 280;
-  const M = { t: 20 * fontScale, r: 20 * fontScale, b: 40 * fontScale, l: 50 * fontScale };
+  const M = { t: 40 * fontScale, r: 20 * fontScale, b: 40 * fontScale, l: 50 * fontScale };
   const svg = el.append('svg')
     .attr('width', '100%')
     .attr('height', H)

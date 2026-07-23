@@ -345,18 +345,31 @@ loadData();
     window.__refreshAll();
   }
 
+  // Set initial
   applyFontSize(slider.value);
 
+  // Slider changes
   slider.addEventListener('input', function() {
     applyFontSize(this.value);
   });
 
+  // Reset button
+  const resetBtn = document.getElementById('fontResetBtn');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', function() {
+      slider.value = '1.0';
+      applyFontSize('1.0');
+    });
+  }
+
+  // Re-apply after persona change
   document.querySelectorAll('.persona-card').forEach(card => {
     card.addEventListener('click', function() {
       setTimeout(() => applyFontSize(slider.value), 100);
     });
   });
 
+  // Re-apply after tab navigation
   document.querySelectorAll('.navitem').forEach(item => {
     item.addEventListener('click', function() {
       setTimeout(() => applyFontSize(slider.value), 100);

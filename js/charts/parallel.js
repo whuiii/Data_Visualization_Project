@@ -21,7 +21,7 @@ export function renderParallel(fullData, sampledData) {
 
   const W = el.node().clientWidth || 1000;
   const H = 340;
-  const M = { t: 26 * fontScale, r: 36 * fontScale, b: 16 * fontScale, l: 36 * fontScale };
+  const M = { t: 50 * fontScale, r: 36 * fontScale, b: 16 * fontScale, l: 36 * fontScale };
   const svg = el.append('svg')
     .attr('width', '100%')
     .attr('height', H)

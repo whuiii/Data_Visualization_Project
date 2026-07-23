@@ -12,7 +12,7 @@ export function renderDrilldown(data) {
 
   const W = el.node().clientWidth || 900;
   const H = 280;
-  const M = { t: 14 * fontScale, r: 16 * fontScale, b: 44 * fontScale, l: 70 * fontScale };
+  const M = { t: 40 * fontScale, r: 16 * fontScale, b: 44 * fontScale, l: 70 * fontScale };
   const svg = el.append('svg')
     .attr('width', '100%')
     .attr('height', H)

@@ -75,7 +75,7 @@ let svg, g, barsG, axisG, trendG, trendAxisG, gridG;
 
 
 const margin = { top: 16, right: 30, bottom: 48, left: 60 };
-const LANE_TOP = 26, LANE_STEP = 44, BAR_H = 26;
+const LANE_TOP = 26, LANE_STEP = 56,  BAR_H = 26;
 
 function buildChart(el) {
   el.html('');

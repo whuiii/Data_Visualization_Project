@@ -18,14 +18,14 @@ export function renderScatter(fullData, sampledData) {
   // ---- Margins that grow with font size ----
   // We add extra space for axis labels and long tick labels
   const margin = {
-    top: 20 * fontScale,
+    top: 40 * fontScale,
     right: 30 * fontScale,
-    bottom: 50 * fontScale,   // extra room for x-axis label
+    bottom: 80 * fontScale,   // extra room for x-axis label
     left: 60 * fontScale      // extra room for y-axis labels
   };
 
   const W = el.node().clientWidth || 900;
-  const H = 340;
+  const H = 440;
   const innerW = W - margin.left - margin.right;
   const innerH = H - margin.top - margin.bottom;
 
@@ -75,12 +75,12 @@ export function renderScatter(fullData, sampledData) {
   // X-axis label (below the axis, with enough spacing)
   g.append('text')
     .attr('x', innerW / 2)
-    .attr('y', innerH + margin.bottom - 6 * fontScale)
+    .attr('y', innerH + margin.bottom - 8 * fontScale)
     .attr('text-anchor', 'middle')
     .style('fill', 'var(--text-faint)')
     .style('font-size', labelFontSize + 'px')
     .style('font-weight', '500')
-    .text('Weekly GenAI hours →');
+    .text('Weekly GenAI hoursr');
 
   // Y-axis label (rotated, to the left of the axis)
   g.append('text')
@@ -91,7 +91,7 @@ export function renderScatter(fullData, sampledData) {
     .style('fill', 'var(--text-faint)')
     .style('font-size', labelFontSize + 'px')
     .style('font-weight', '500')
-    .text('↑ Post-semester GPA');
+    .text('Post-semester GPA');
 
   // ---- Plot points ----
   g.append('g').selectAll('circle')

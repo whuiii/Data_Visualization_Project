@@ -12,7 +12,7 @@ export function renderHeatmap(selector, data) {
   const useCases = Array.from(new Set(RAW_DATA.map(d => d.Primary_Use_Case)));
   const W = el.node().clientWidth || 900;
   const H = 300;
-  const M = { t: 16 * fontScale, r: 16 * fontScale, b: 80 * fontScale, l: 100 * fontScale };
+  const M = { t: 30 * fontScale, r: 16 * fontScale, b: 50 * fontScale, l: 100 * fontScale };
   const svg = el.append('svg')
     .attr('width', '100%')
     .attr('height', H)
