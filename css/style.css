@@ -1242,3 +1242,24 @@ svg text,
     border-color: var(--border-strong);
     color: var(--text);
 }
+
+#usageLineLegend,
+#trendLegend {
+    margin-top: 18px !important;   
+    padding-top: 0 !important;     
+    min-height: 28px;              
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 20px;
+    font-size: 12px;               /* Consistent font size */
+}
+
+/* Ensure the legend spans inside them behave the same */
+#usageLineLegend span,
+#trendLegend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;           /* Prevents wrapping inside items */
+}

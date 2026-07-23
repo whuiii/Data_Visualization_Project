@@ -9,7 +9,7 @@ export function renderExecutiveTreemap(data) {
 
   const W = el.node().clientWidth || 800;
   const H = 400;
-  const M = { t: 10 * fontScale, r: 10 * fontScale, b: 30 * fontScale, l: 10 * fontScale };
+  const M = { t: 10 * fontScale, r: 10 * fontScale, b: 20 * fontScale, l: 10 * fontScale };
   const svg = el.append('svg')
     .attr('width', '100%')
     .attr('height', H)
@@ -32,7 +32,7 @@ export function renderExecutiveTreemap(data) {
       .attr('y', H / 2)
       .attr('text-anchor', 'middle')
       .style('fill', 'var(--text-muted)')
-      .style('font-size', (14 * fontScale) + 'px')
+      .style('font-size', (16 * fontScale) + 'px')
       .text('Not enough data to show treemap');
     return;
   }
@@ -96,18 +96,44 @@ export function renderExecutiveTreemap(data) {
       return d.data.major;
     });
 
+  // Clear and rebuild legend
   const legend = d3.select('#treemapLegend');
   legend.selectAll('*').remove();
-  legend.append('span')
-    .html(`<i style="background:${colorScale(0)}"></i> Low AI hrs`)
-    .style('font-size', (11 * fontScale) + 'px');
-  legend.append('span')
-    .html(`<i style="background:${colorScale(maxAI * 0.5)}"></i> Medium`)
-    .style('font-size', (11 * fontScale) + 'px');
-  legend.append('span')
-    .html(`<i style="background:${colorScale(maxAI)}"></i> High AI hrs`)
-    .style('font-size', (11 * fontScale) + 'px');
-  legend.append('span')
-    .text('Area = number of students')
-    .style('font-size', (11 * fontScale) + 'px');
+
+  legend
+    .style('display', 'flex')
+    .style('flex-direction', 'column')
+    .style('gap', `${8 * fontScale}px`)
+    .style('font-size', `${14 * fontScale}px`);
+
+  // Color legend
+  const colorLegend = legend.append('div')
+    .style('display', 'flex')
+    .style('align-items', 'center')
+    .style('gap', `${10 * fontScale}px`);
+
+  colorLegend.append('span')
+    .style('font-weight', '500')
+    .text();
+
+  [
+    { color: colorScale(0), label: 'Low AI Usage' },
+    { color: colorScale(maxAI * 0.5), label: 'Medium AI Usage' },
+    { color: colorScale(maxAI), label: 'High AI Usage' }
+  ].forEach(item => {
+    const itemDiv = colorLegend.append('div')
+      .style('display', 'flex')
+      .style('align-items', 'center')
+      .style('gap', `${4 * fontScale}px`);
+
+    itemDiv.append('i')
+      .style('width', `${14 * fontScale}px`)
+      .style('height', `${14 * fontScale}px`)
+      .style('border-radius', '3px')
+      .style('background', item.color);
+
+    itemDiv.append('span')
+      .text(item.label);
+  });
+
 }

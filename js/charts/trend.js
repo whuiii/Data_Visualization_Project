@@ -8,9 +8,9 @@ export function renderTrend(data) {
   const el = d3.select('#chartTrend');
   el.selectAll('*').remove();
 
-  const W = el.node().clientWidth || 1000;
-  const H = 230;
-  const M = { t: 18 * fontScale, r: 52 * fontScale, b: 36 * fontScale, l: 48 * fontScale };
+   const W = el.node().clientWidth || 560;
+  const H = 280; 
+  const M = { t: 40 * fontScale, r: 52 * fontScale, b: 36 * fontScale, l: 48 * fontScale }; 
   const svg = el.append('svg')
     .attr('width', '100%')
     .attr('height', H)

@@ -63,10 +63,12 @@ const refreshAll = function () {
   renderSearchHit(fullData);
   renderTimeline(fullData);
 
-  renderDrilldown(fullData);
+  
   renderHeatmap('#chartHeatmap', fullData);
   renderParallel(fullData, sampledData);
-  renderTrend(fullData);
+  renderScatterMatrix(fullData, sampledData);
+
+  
 
   const persona = state.persona;
   const studentView = document.getElementById('studentView');
@@ -93,7 +95,8 @@ const refreshAll = function () {
       renderScatter(fullData, sampledData);
       renderPaidPie(fullData);
     } else if (persona === 'lecturer') {
-      renderScatterMatrix(fullData, sampledData);
+      renderDrilldown(fullData);
+      renderTrend(fullData);
       renderStackedBar(fullData);
       renderHistogram(fullData);
       renderUsageLine(fullData);
